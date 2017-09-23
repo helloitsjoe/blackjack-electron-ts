@@ -1,3 +1,3 @@
-# TypeScript Starter
+# Blackjack TypeScript
 
-A simple TypeScript starter project.
+
