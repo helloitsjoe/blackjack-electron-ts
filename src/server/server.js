@@ -20,19 +20,25 @@ server.listen(PORT, () => {
 });
 
 wsServer.on('connection', (ws) => {
-    ws.on('message', onMessage.bind(null, ws));
+    ws.on('message', onMessage);
     ws.on('close', onClose.bind(null, ws));
     
     connections.push(ws);
     console.log('new connex bruh');
 });
 
-function onMessage(ws, data) {
+function onMessage(data) {
     let json = JSON.parse(data);
     console.log('msg:', json.msg, 'from', json.id);
 }
 
-function onClose(ws, data) {
-    let json = JSON.parse(data);
-    console.log('closed', json.id);
+function onClose(ws) {
+    let i;
+    for (i = 0; i < connections.length; i++) {
+        if (connections[i] === ws) {
+            console.log('closed', i);
+            break;
+        }
+    }
+    connections.splice(i, 1);
 }
