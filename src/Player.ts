@@ -2,6 +2,7 @@ import PlayerGUI from './PlayerGUI';
 import DealerGUI from './DealerGUI';
 import Game from './Game';
 import Deck, { Card } from './Deck';
+import WSClient from './WSClient';
 
 export default class Player {
 
@@ -13,11 +14,14 @@ export default class Player {
     protected game:Game;
     public gui:PlayerGUI|DealerGUI;
     public position:number;
+    public ws: any;
 
-    constructor(game:Game, position:number, deck:Deck) {
+    constructor(game:Game, position:number) {
         this.game = game;
-        this.deck = deck;
+        this.deck = game.deck;
         this.position = position;
+        this.ws = game.ws;
+        this.ws.id = position;
 
         this.hand = [];
 
@@ -57,12 +61,12 @@ export default class Player {
         this.score += card.value;
         this.gui.addCard(card);
 
-        if (this.score > 21) {
-            this.bust = true;
-            this.gui.disable();
-            this.game.end();
-        } else if (this.score === 21) {
+        if (this.score > 20) {
             this.blackjack = true;
+            if (this.score > 21) {
+                this.blackjack = false;
+                this.bust = true;
+            }
             this.gui.disable();
             this.game.end();
         }
