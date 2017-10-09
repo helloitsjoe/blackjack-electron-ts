@@ -24,16 +24,26 @@ export default class Player {
         this.ws.id = position;
 
         this.hand = [];
+        
+        // this.wait();
 
         this.gui = position > 0 ? new PlayerGUI(this) : new DealerGUI(this);
+        this.deal();
     }
+    
+    // wait():void {
+    //     document.getElementById('main').innerHTML =
+    //     `
+    //         <div id="player-list"></div>
+    //     `
+    //     // document.getElementById('main').innerHTML = 'Waiting...';
+    // }
 
     deal():void {
         // move cards from hand to discard
         this.deck.discards = this.deck.discards.concat(this.hand);
         this.hand.length = 0;
 
-        // clear card data
         this.gui.clearCards();
         this.score = 0;
         this.bust = false;
@@ -43,6 +53,8 @@ export default class Player {
     }
 
     hit(times:number = 1):void {
+        // this.ws.hit(this.position);
+        
         if (!this.deck.cards.length) {
             this.deck.shuffle();
         }
@@ -76,6 +88,7 @@ export default class Player {
     }
 
     endTurn():void {
+        // this.ws.endTurn(this.position);
         this.game.nextPlayer();
     }
 }

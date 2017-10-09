@@ -1,33 +1,40 @@
 const path = require('path');
 const http = require('http');
-const express = require('express');
 const WebSocket = require('ws');
-const bodyParser = require('body-parser');
+const express = require('express');
 
 const app = express();
 const server = http.createServer(app);
-const wsServer = new WebSocket.Server({ server });
 
-const PORT = 8080;
+app.use(express.static(path.join(__dirname, '../../')));
+app.use(express.static(path.join(__dirname, '../player')));
+
+const GAME_PORT = 8080;
+const WSS_PORT = 8081;
+
+const wsServer = new WebSocket.Server({ port: WSS_PORT });
+app.listen(GAME_PORT, () => {
+    console.log(`listening on ${GAME_PORT} for new game`);
+});
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../index.html'));
+});
+app.get('/player', (req, res) => {
+    res.sendFile(path.join(__dirname, '../player/index.html'));
+});
 
 let connections = [];
 
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, '../../')));
-
-server.listen(PORT, () => {
-    console.log('poop');
-});
-
 wsServer.on('connection', (ws) => {
-    ws.on('message', onMessage);
+    ws.on('message', onMessage.bind(null, ws));
     ws.on('close', onClose.bind(null, ws));
     
-    connections.push(ws);
     console.log('new connex bruh');
+    connections.push(ws);
+    ws.send(JSON.stringify({totalPlayers: connections.length}));
 });
 
-function onMessage(data) {
+function onMessage(ws, data) {
     let json = JSON.parse(data);
     console.log('msg:', json.msg, 'from', json.id);
 }

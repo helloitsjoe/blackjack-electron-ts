@@ -61,12 +61,10 @@ export default class PlayerGUI {
     }
 
     hit(): void {
-        this.player.ws.hit(this.player.position);
         this.player.hit();
     }
 
     endTurn(): void {
-        this.player.ws.endTurn(this.player.position);
         this.player.endTurn();
     }
 }

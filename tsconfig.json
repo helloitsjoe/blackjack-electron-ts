@@ -8,7 +8,10 @@
         "sourceMap": true,
         "experimentalDecorators": true,
         "allowJs": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "types": [
+            "node"
+        ]
     },
     "include": [
         "./src/**/*"

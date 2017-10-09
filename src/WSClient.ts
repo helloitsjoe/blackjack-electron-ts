@@ -1,6 +1,7 @@
 export default class WSClient {
     
     public ws: any;
+    public players: any;
     
     constructor(host: string, port: number) {
         this.ws = new WebSocket(`ws://${host}:${port}`);
@@ -29,7 +30,10 @@ export default class WSClient {
         
     }
     
-    onMessage() {
-        
+    onMessage(res) {
+        const data = JSON.parse(res.data);
+        // console.log(res);
+        console.log('players:', data.totalPlayers);
+        this.players = data.totalPlayers;
     }
 }

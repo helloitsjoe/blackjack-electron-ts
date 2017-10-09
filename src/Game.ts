@@ -1,6 +1,8 @@
 import Deck from './Deck';
 import Player from './Player';
 import Dealer from './Dealer';
+import WSClient from './WSClient';
+// import Server from './Server';
 
 export default class Game {
 
@@ -10,12 +12,16 @@ export default class Game {
     private endState: Element;
     public deck: Deck;
     public ws: WebSocket;
+    public wsClient: WSClient;
+    // public wsServer: Server;
 
-    constructor(ws: WebSocket) {
+    constructor() {
+        // this.wsServer = new Server().start();
+        this.wsClient = new WSClient('localhost', 8081);
         this.endState = document.getElementById('end-state');
         this.refresh = this.refresh.bind(this);
         this.endState.addEventListener('click', this.refresh);
-        this.ws = ws;
+        this.ws = this.wsClient.ws;
     }
 
     play(): void {
@@ -24,6 +30,7 @@ export default class Game {
         // const newPlayers = prompt('How many players?');
         const newPlayers = 1;
         this.totalPlayers += newPlayers;
+        // this.totalPlayers = this.wsClient.players;
         this.deck = new Deck(1);
         this.makePlayers();
         this.deal();
