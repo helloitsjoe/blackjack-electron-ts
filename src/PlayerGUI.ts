@@ -1,5 +1,6 @@
 import { Card } from './Deck';
 import Player from './Player';
+import { e } from './utils';
 
 export default class PlayerGUI {
 
@@ -40,7 +41,7 @@ export default class PlayerGUI {
     addCard(cardData: Card): Element {
         this.score.innerHTML = this.player.score.toString();
         let card = e('div', 'card', null, this.cardBox);
-        card.innerHTML = cardData.toString();
+        card.innerHTML = cardData.display;
         return card;
     }
 
@@ -66,30 +67,5 @@ export default class PlayerGUI {
 
     endTurn(): void {
         this.player.endTurn();
-    }
-}
-
-function e(tag: string, classes?: string, id?: string, parentNode?: Element, innerHTML?: string): Element {
-    const element = document.createElement(tag);
-    if (classes) {
-        let classArr;
-        if (typeof classes === 'string') {
-            classArr = classes.split(' ');
-        } else {
-            classArr = classes;
-        }
-        classArr.forEach((className) => {
-            element.classList.add(className);
-        });
-    }
-    if (id) {
-        element.id = id;
-    }
-    if (parentNode) {
-        parentNode.appendChild(element);
-    }
-    if (innerHTML) {
-        element.innerHTML = innerHTML;
-    }
-    return element;
+    }    
 }

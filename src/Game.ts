@@ -7,17 +7,17 @@ import WSClient from './WSClient';
 export default class Game {
 
     private totalPlayers: number = 1; // Dealer
-    private players: any[] = []; // TODO: No any
+    public newPlayers: number = 0;
+    public players: any[] = []; // TODO: No any
     private curr: number = 0;
     private endState: Element;
     public deck: Deck;
     public ws: WebSocket;
     public wsClient: WSClient;
-    // public wsServer: Server;
+    // public wsServer: any;
 
     constructor() {
-        // this.wsServer = new Server().start();
-        this.wsClient = new WSClient('localhost', 8081);
+        this.wsClient = new WSClient('localhost', 8081, this);
         this.endState = document.getElementById('end-state');
         this.refresh = this.refresh.bind(this);
         this.endState.addEventListener('click', this.refresh);
@@ -27,10 +27,8 @@ export default class Game {
     play(): void {
         // TODO: set up turns, so hit/stay only works when it's that player's turn
         // TODO: Add players
-        // const newPlayers = prompt('How many players?');
-        const newPlayers = 1;
-        this.totalPlayers += newPlayers;
-        // this.totalPlayers = this.wsClient.players;
+        this.totalPlayers += this.newPlayers;
+        console.log(this.totalPlayers);
         this.deck = new Deck(1);
         this.makePlayers();
         this.deal();
@@ -38,7 +36,6 @@ export default class Game {
 
     makePlayers(): void {
         this.players.push(new Dealer(this, 0));
-
         for (let i = 1; i < this.totalPlayers; i++) {
             // dealer is position 0
             this.players.push(new Player(this, i));
@@ -47,9 +44,10 @@ export default class Game {
 
     deal(): void {
         for (let i = 0; i < this.totalPlayers; i++) {
+            console.log('i:', i);
             this.players[i].deal();
         }
-        this.nextPlayer();
+        // this.nextPlayer();
     }
 
     nextPlayer(): void {

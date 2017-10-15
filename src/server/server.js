@@ -31,12 +31,29 @@ wsServer.on('connection', (ws) => {
     
     console.log('new connex bruh');
     connections.push(ws);
-    ws.send(JSON.stringify({totalPlayers: connections.length}));
+    ws.send(JSON.stringify({
+        totalPlayers: connections.length
+    }));
 });
 
 function onMessage(ws, data) {
+    // data = {
+    //     msg: string,
+    //     id: position,
+    //     card: cardData
+    // }
     let json = JSON.parse(data);
-    console.log('msg:', json.msg, 'from', json.id);
+    console.log('json:', json);
+    const dealer = connections[0];
+    dealer.send(JSON.stringify(json));
+    if (json.id) {
+        if (json.msg === 'HitMe') {
+            // TODO: Why is this hitting twice?
+            dealer.send(data);
+        } else {
+            connections[json.id].send(data);
+        }
+    }
 }
 
 function onClose(ws) {

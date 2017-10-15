@@ -2,7 +2,7 @@ export interface Card {
     suit:string;
     value:number;
     face:string;
-    toString:() => string;
+    display:string;
 }
 
 export default class Deck {
@@ -51,11 +51,12 @@ export default class Deck {
                 // push 13 cards
                 for (let i = 1; i <= 13; i++) {
                     let value = i > 10 ? 10 : (i === 1 ? 11 : i);
+                    let display = `${faces(i)}</br>${suit}`;
                     let card:Card = {
                         value,
+                        display,
                         suit: suits[suit],
                         face: faces(i),
-                        toString: () => `${faces(i)}</br>${suit}`
                     };
                     this.cards.push(card);
                 }

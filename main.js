@@ -7,13 +7,17 @@ const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 const url = require('url')
 
+// sparkUpServer();
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({width: 800, height: 400, x: 0, y: 0});
+  playerWindow = new BrowserWindow({width: 800, height: 400, x: 0, y: 430});
+  player2Window = new BrowserWindow({width: 800, height: 400, x: 300, y: 430});
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
@@ -23,16 +27,31 @@ function createWindow () {
     // protocol: 'file:',
     slashes: true
   }))
+  setTimeout(() => {
+      playerWindow.loadURL(url.format({
+          pathname: 'localhost:8080/player',
+          protocol: 'http:',
+          slashed: true
+      }));
+      player2Window.loadURL(url.format({
+          pathname: 'localhost:8080/player',
+          protocol: 'http:',
+          slashed: true
+      }));
+  }, 500);
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
+  playerWindow.webContents.openDevTools()
+  player2Window.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null
+    mainWindow = null;
+    playerWindow = null;
   })
 }
 
@@ -57,6 +76,15 @@ app.on('activate', function () {
     createWindow()
   }
 })
+
+function sparkUpServer() {
+    const { spawn } = require('child_process');
+    const child = spawn('node', ['./src/server/server.js'], {
+        // detached: true,
+        stdio: 'ignore'
+    });
+    // child.unref();
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

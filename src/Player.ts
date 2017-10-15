@@ -25,19 +25,9 @@ export default class Player {
 
         this.hand = [];
         
-        // this.wait();
-
         this.gui = position > 0 ? new PlayerGUI(this) : new DealerGUI(this);
-        this.deal();
+        // this.deal();
     }
-    
-    // wait():void {
-    //     document.getElementById('main').innerHTML =
-    //     `
-    //         <div id="player-list"></div>
-    //     `
-    //     // document.getElementById('main').innerHTML = 'Waiting...';
-    // }
 
     deal():void {
         // move cards from hand to discard
@@ -72,6 +62,8 @@ export default class Player {
 
         this.score += card.value;
         this.gui.addCard(card);
+        console.log('position', this.position);
+        this.ws.hit(card, this.position);
 
         if (this.score > 20) {
             this.blackjack = true;

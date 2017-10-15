@@ -28,6 +28,6 @@ export default class DealerGUI extends PlayerGUI {
 
     reveal(card:Card):void {
         this.infoBox.setAttribute('visibility', 'visible');
-        this.cardBox.children[0].innerHTML = card.toString();
+        this.cardBox.children[0].innerHTML = card.display;
     }
 }
