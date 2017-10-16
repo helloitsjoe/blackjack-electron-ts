@@ -1,5 +1,4 @@
 const ws = new WebSocket('ws://localhost:8081');
-// const utils = require('./utils');
 
 const hitButton = document.getElementById('hit-button');
 hitButton.addEventListener('click', () => {
@@ -19,6 +18,7 @@ ws.addEventListener('message', (msg) => {
     
     console.log(data);
     if (data.msg === 'Hit') {
+        console.log('hit pingback')
         addCard(data.card);
     }
 });

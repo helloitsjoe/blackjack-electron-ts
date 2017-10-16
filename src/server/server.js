@@ -48,8 +48,8 @@ function onMessage(ws, data) {
     dealer.send(JSON.stringify(json));
     if (json.id) {
         if (json.msg === 'HitMe') {
-            // TODO: Why is this hitting twice?
-            dealer.send(data);
+            console.log('hitme')
+            // dealer.send(data);
         } else {
             connections[json.id].send(data);
         }

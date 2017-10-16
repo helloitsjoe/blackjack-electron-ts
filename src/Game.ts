@@ -2,26 +2,24 @@ import Deck from './Deck';
 import Player from './Player';
 import Dealer from './Dealer';
 import WSClient from './WSClient';
-// import Server from './Server';
 
 export default class Game {
 
+    public wsClient: WSClient;
+    public ws: WebSocket;
     private totalPlayers: number = 1; // Dealer
     public newPlayers: number = 0;
     public players: any[] = []; // TODO: No any
     private curr: number = 0;
     private endState: Element;
     public deck: Deck;
-    public ws: WebSocket;
-    public wsClient: WSClient;
-    // public wsServer: any;
 
     constructor() {
         this.wsClient = new WSClient('localhost', 8081, this);
+        this.ws = this.wsClient.ws;
         this.endState = document.getElementById('end-state');
         this.refresh = this.refresh.bind(this);
         this.endState.addEventListener('click', this.refresh);
-        this.ws = this.wsClient.ws;
     }
 
     play(): void {

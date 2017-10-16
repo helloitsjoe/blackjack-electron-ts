@@ -43,8 +43,6 @@ export default class Player {
     }
 
     hit(times:number = 1):void {
-        // this.ws.hit(this.position);
-        
         if (!this.deck.cards.length) {
             this.deck.shuffle();
         }
