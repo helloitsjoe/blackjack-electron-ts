@@ -14,14 +14,18 @@ export default class Player {
     protected game:Game;
     public gui:PlayerGUI|DealerGUI;
     public position:number;
+    public wsClient: WSClient;
     public ws: any;
 
-    constructor(game:Game, position:number) {
-        this.game = game;
+    constructor(game: Game, ws:WebSocket, position:number) {
+        // this.wsClient = new WSClient('localhost', 8081);
+        // this.ws = this.wsClient.ws;
+        
+        // this.game = game;
         this.deck = game.deck;
         this.position = position;
-        this.ws = game.ws;
-        this.ws.id = position;
+        this.ws = ws;
+        // this.ws.id = position;
 
         this.hand = [];
         
@@ -31,7 +35,7 @@ export default class Player {
 
     deal():void {
         // move cards from hand to discard
-        this.deck.discards = this.deck.discards.concat(this.hand);
+        // this.deck.discards = this.deck.discards.concat(this.hand);
         this.hand.length = 0;
 
         this.gui.clearCards();
@@ -61,7 +65,10 @@ export default class Player {
         this.score += card.value;
         this.gui.addCard(card);
         console.log('position', this.position);
-        this.ws.hit(card, this.position);
+        // if (this.ws) {
+        //     console.log(this.ws)
+        //     this.ws.hit(card, this.position); // TODO: Find a better way to separate dealer/player hit
+        // }
 
         if (this.score > 20) {
             this.blackjack = true;

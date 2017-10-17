@@ -13,10 +13,13 @@ export default class PlayerGUI {
     protected infoBox: Element;
     protected label: Element;
     protected score: Element;
+    protected endState: Element;
 
     constructor(player: Player) {
         this.hit = this.hit.bind(this);
         this.endTurn = this.endTurn.bind(this);
+        this.endState = document.getElementById('end-state');
+        this.endState.addEventListener('click', () => {}/*game.refresh*/); // TODO: send 'refresh' intent to game
         this.player = player;
         this.init();
     }

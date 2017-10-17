@@ -86,4 +86,8 @@ export default class Deck {
             this.cards[randomIndex] = temp;
         }
     }
+    
+    public moveHandToDiscards(player): void {
+        this.discards = this.discards.concat(player.hand);
+    }
 }

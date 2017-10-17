@@ -1,9 +1,12 @@
 import Game from './Game';
 
 const game = new Game();
+game.init();
 
 const playButton = document.getElementById('playBtn');
-playButton.addEventListener('click', () => {
-    playButton.style.visibility = 'hidden';
-    game.play();
-});
+if (playButton) {
+    playButton.addEventListener('click', () => {
+        playButton.style.visibility = 'hidden';
+        game.play();
+    });
+}
