@@ -19,7 +19,7 @@ export default class PlayerGUI {
         this.hit = this.hit.bind(this);
         this.endTurn = this.endTurn.bind(this);
         this.endState = document.getElementById('end-state');
-        this.endState.addEventListener('click', () => {}/*game.refresh*/); // TODO: send 'refresh' intent to game
+        this.endState.addEventListener('click', () => { }/*game.refresh*/); // TODO: send 'refresh' intent to game
         this.player = player;
         this.init();
     }
@@ -31,10 +31,10 @@ export default class PlayerGUI {
 
         this.board = e('div', 'player', `player-${this.player.position}`, boardParent);
         this.cardBox = e('div', null, null, this.board);
-        
+
         this.buttonBox = e('div', 'button-box', null, this.board);
         this.hitButton = e('button', null, null, this.buttonBox, 'Hit');
-        this.stayButton = e('button', null, null, this.buttonBox, 'Stay');            
+        this.stayButton = e('button', null, null, this.buttonBox, 'Stay');
 
         this.infoBox = e('div', 'info', null, this.board)
         this.label = e('span', null, null, this.infoBox, infoText);
@@ -70,5 +70,5 @@ export default class PlayerGUI {
 
     endTurn(): void {
         this.player.endTurn();
-    }    
+    }
 }

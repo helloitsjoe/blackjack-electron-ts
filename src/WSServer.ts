@@ -2,22 +2,22 @@ import WebSocket = require('ws');
 import Game from './Game';
 
 export default class WSServer {
-    
+
     private game: Game;
     private port: number;
     private server: WebSocket.Server;
     private connections: WebSocket[] = [];
-    
+
     constructor(game, port) {
         this.game = game;
         this.server = new WebSocket.Server({ port });
     }
-    
+
     public init(): void {
         this.server.on('connection', (ws) => {
             ws.on('message', this.onMessage.bind(null, ws));
             ws.on('close', this.onClose.bind(null, ws));
-            
+
             console.log('new connex bruh');
             const playerId = this.game.addPlayer(ws);
             this.connections.push(ws);
@@ -26,9 +26,9 @@ export default class WSServer {
             }));
         });
     }
-    
+
     public deal(i, hand): void {
-        this.connections[i].send(JSON.stringify({ msg:'deal', hand }));
+        this.connections[i].send(JSON.stringify({ msg: 'deal', hand }));
     }
 
     private onMessage(ws, data) {

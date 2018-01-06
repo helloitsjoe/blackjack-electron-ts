@@ -3,9 +3,9 @@ import Player from "./Player";
 
 export default class Dealer extends Player {
 
-    public gui:DealerGUI;
+    public gui: DealerGUI;
 
-    dealerTurn():void {
+    dealerTurn(): void {
         while (this.score < 17) {
             this.hit();
         }
@@ -14,7 +14,7 @@ export default class Dealer extends Player {
         }
     }
 
-    reveal():void {
+    reveal(): void {
         this.gui.reveal(this.hand[0]);
     }
 }

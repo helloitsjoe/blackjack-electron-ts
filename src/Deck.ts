@@ -1,16 +1,16 @@
 export interface Card {
-    suit:string;
-    value:number;
-    face:string;
-    display:string;
+    suit: string;
+    value: number;
+    face: string;
+    display: string;
 }
 
 export default class Deck {
 
-    public cards:Card[] = [];
-    public discards:Card[] = [];
+    public cards: Card[] = [];
+    public discards: Card[] = [];
 
-    constructor(numPacks:number) {
+    constructor(numPacks: number) {
         this.init(numPacks);
         this.shuffle();
 
@@ -21,7 +21,7 @@ export default class Deck {
         // console.log(this.cards.length)
     }
 
-    init(numPacks:number):void {
+    init(numPacks: number): void {
         const suits = {
             clubs: 0,
             hearts: 1,
@@ -30,7 +30,7 @@ export default class Deck {
         }
 
         const faces = (val) => {
-            switch(val) {
+            switch (val) {
                 case 1:
                     return 'A';
                 case 11:
@@ -52,7 +52,7 @@ export default class Deck {
                 for (let i = 1; i <= 13; i++) {
                     let value = i > 10 ? 10 : (i === 1 ? 11 : i);
                     let display = `${faces(i)}</br>${suit}`;
-                    let card:Card = {
+                    let card: Card = {
                         value,
                         display,
                         suit: suits[suit],
@@ -64,7 +64,7 @@ export default class Deck {
         }
     }
 
-    shuffle():void {
+    shuffle(): void {
         console.log('Shuffling...');
         // transfer cards from discard array
         if (!this.cards.length && this.discards.length) {
@@ -79,14 +79,14 @@ export default class Deck {
 
         while (currIndex > 0) {
             randomIndex = Math.floor(Math.random() * currIndex);
-            currIndex --;
+            currIndex--;
 
             temp = this.cards[currIndex];
             this.cards[currIndex] = this.cards[randomIndex];
             this.cards[randomIndex] = temp;
         }
     }
-    
+
     public moveHandToDiscards(player): void {
         this.discards = this.discards.concat(player.hand);
     }

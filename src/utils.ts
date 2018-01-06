@@ -1,4 +1,4 @@
-export function e(tag?: string, classes?: string|string[], id?: string, parentNode?: Node, innerHTML?: string) {
+export function e(tag?: string, classes?: string | string[], id?: string, parentNode?: Node, innerHTML?: string) {
     const element = document.createElement(tag);
     if (classes) {
         let classArr;

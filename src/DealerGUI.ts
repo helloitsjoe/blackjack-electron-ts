@@ -3,7 +3,7 @@ import PlayerGUI from './PlayerGUI';
 
 export default class DealerGUI extends PlayerGUI {
 
-    init():void {
+    init(): void {
         super.init();
 
         // Hide buttons and info, but keep visual spacing of info
@@ -11,7 +11,7 @@ export default class DealerGUI extends PlayerGUI {
         this.infoBox.setAttribute('visibility', 'hidden');
     }
 
-    addCard(cardData:Card):Element {
+    addCard(cardData: Card): Element {
         // Hide info on first card
         let card = super.addCard(cardData);
         if (this.player.hand.length === 1) {
@@ -20,13 +20,13 @@ export default class DealerGUI extends PlayerGUI {
         return card;
     }
 
-    clearCards():void {
+    clearCards(): void {
         super.clearCards();
         // Hide total score
         this.infoBox.setAttribute('visibility', 'hidden');
     }
 
-    reveal(card:Card):void {
+    reveal(card: Card): void {
         this.infoBox.setAttribute('visibility', 'visible');
         this.cardBox.children[0].innerHTML = card.display;
     }

@@ -9,7 +9,7 @@ const HOST = 'localhost';
 const WSS_PORT = 8081;
 
 export default class Game {
-    
+
     // private static _instance: Game;
 
     // public wsClient: WSClient;
@@ -27,11 +27,11 @@ export default class Game {
     constructor() {
         this.refresh = this.refresh.bind(this);
     }
-    
+
     // public static get Instance() {
     //     return Game._instance || (Game._instance = new this());
     // }
-    
+
     public init(): void {
         if (document.getElementById('dealer')) {
             this.server = new WSServer(this, WSS_PORT);
@@ -46,7 +46,7 @@ export default class Game {
             // this.players.push(new Player(this, ws, this.totalPlayers++));
         }
     }
-    
+
     public addPlayer(ws) {
         this.totalPlayers++;
         this.players.push(new Player(this, ws, this.totalPlayers));
@@ -63,7 +63,7 @@ export default class Game {
         // this.makePlayers();
         this.deal();
     }
-    
+
     // createDealer(): Dealer {
     //     if (!this.dealer) {
     //         return new Dealer();
@@ -96,7 +96,7 @@ export default class Game {
         this.dealer.deal();
         for (let i = 0; i < this.players.length; i++) {
             this.deck.moveHandToDiscards(this.players[i]);
-            
+
             console.log('i:', i);
             this.players[i].deal();
             this.server.deal(i, this.players[i].hand);
