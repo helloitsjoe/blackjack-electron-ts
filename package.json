@@ -4,6 +4,7 @@
   "description": "Blackjack!",
   "main": "main.js",
   "scripts": {
+    "server:watch": "node_modules/.bin/nodemon src/server/server.js",
     "server": "node src/server/server.js",
     "watch": "node_modules/.bin/webpack --watch",
     "start": "electron .",
@@ -18,6 +19,7 @@
   "devDependencies": {
     "@types/node": "^8.0.33",
     "express": "^4.16.1",
+    "nodemon": "^1.14.8",
     "ts-loader": "^2.3.2",
     "typescript": "^2.4.2",
     "webpack": "^3.4.1",

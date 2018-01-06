@@ -14,13 +14,10 @@ export default class Player {
     protected game: Game;
     public gui: PlayerGUI | DealerGUI;
     public position: number;
-    public wsClient: WSClient;
+    // public wsClient: WSClient;
     public ws: any;
 
     constructor(game: Game, ws: WebSocket, position: number) {
-        // this.wsClient = new WSClient('localhost', 8081);
-        // this.ws = this.wsClient.ws;
-
         this.game = game;
         this.deck = game.deck;
         this.position = position;
@@ -84,8 +81,13 @@ export default class Player {
         }
     }
 
-    endTurn(): void {
-        // this.ws.endTurn(this.position);
-        this.game.nextPlayer();
+    // endTurn(): void {
+    //     // this.ws.endTurn(this.position);
+    //     this.game.nextPlayer();
+    // }
+
+    // TODO: Swap deck.moveToDiscards for this
+    discard(deck): void {
+        deck.discards = [...deck.discards, ...this.hand];
     }
 }

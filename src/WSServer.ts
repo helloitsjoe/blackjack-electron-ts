@@ -1,25 +1,38 @@
 import WebSocket from 'ws';
 import Game from './Game';
+import Player from './Player';
 
 export default class WSServer {
 
     private connections: WebSocket[] = [];
+    private currID: number = 0;
 
     constructor(game: Game, server: WebSocket.Server) {
         server.on('connection', (ws) => {
-            console.log('new connex bruh');
             ws.on('message', this.onMessage.bind(null, ws));
-            ws.on('close', this.onClose.bind(null, ws));
-
+            ws.on('close', this.onClose.bind(this, ws, game));
+            // Add id to ws? ws.id = newID;
+            
             this.connections.push(ws);
 
-            const id = game.addPlayer(ws);
+            const id = this.addPlayer(ws, game);
+            console.log(`Player joined! Total: ${game.totalPlayers}`);
+
             ws.send(JSON.stringify({ id }));
         });
     }
 
-    public deal(i, hand): void {
-        this.connections[i].send(JSON.stringify({ msg: 'deal', hand }));
+    public addPlayer(ws, game) {
+        this.currID++;
+        game.totalPlayers++;
+        game.players.push(new Player(game, ws, this.currID));
+        return this.currID;
+    }
+
+    public sendHands(players): void {
+        this.connections.forEach((connex, i) => {
+            connex.send(JSON.stringify({ msg: 'deal', hand: players[i].hand }))
+        });
     }
 
     private onMessage(ws, data) {
@@ -42,14 +55,11 @@ export default class WSServer {
         }
     }
 
-    private onClose(ws) {
-        let i;
-        for (i = 0; i < this.connections.length; i++) {
-            if (this.connections[i] === ws) {
-                console.log('closed', i);
-                break;
-            }
-        }
-        this.connections.splice(i, 1);
+    private onClose(ws, game) {
+        game.totalPlayers--;
+        console.log(`Player left, total players: ${game.totalPlayers}`);
+
+        const connIdx = this.connections.findIndex(cnx => cnx === ws);
+        this.connections.splice(connIdx, 1);
     }
 }

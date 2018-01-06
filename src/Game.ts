@@ -12,28 +12,27 @@ export default class Game {
 
     // public ws: WebSocket;
     private wsServer: WebSocket.Server;
-    private totalPlayers: number = 1; // Dealer
+    public totalPlayers: number = 1; // Dealer
     public newPlayers: number = 0;
     public dealer: Dealer;
     public players: any[] = []; // TODO: No any
     private curr: number = 0;
-    private endState: Element;
+    // private endState: Element;
     public deck: Deck;
 
     constructor() {
-        this.refresh = this.refresh.bind(this);
+        // this.refresh = this.refresh.bind(this);
     }
 
     public initDealer(): void {
-        console.log(`Dealer: ws server listening on port ${WSS_PORT}`);
-        const server = new WebSocket.Server({ port: WSS_PORT });
         // Set up a server, which calls addPlayer on a new connection
-        this.wsServer = new WSServer(this, server);
+        this.wsServer = new WSServer(this, new WebSocket.Server({ port: WSS_PORT }));
+        console.log(`Dealer: ws server listening on port ${WSS_PORT}`);
 
         this.deck = new Deck(1);
-
+        
         this.dealer = new Dealer(this, null, 0);
-        // this.players.push(new Dealer(this, null, 0));
+        // this.players.push(this.dealer);
     }
 
     public initPlayer(): void {
@@ -43,116 +42,84 @@ export default class Game {
         // this.players.push(new Player(this, ws, this.totalPlayers++));
     }
 
-    public addPlayer(ws) {
-        this.totalPlayers++;
-        this.players.push(new Player(this, ws, this.totalPlayers));
-        return this.totalPlayers;
-    }
-
     play(): void {
         // TODO: set up turns, so hit/stay only works when it's that player's turn
         // TODO: Add players
         // this.totalPlayers += this.newPlayers;
-        console.log('players:', this.totalPlayers);
         // this.deck = new Deck(1);
         // this.players.push(new Dealer(this, null, 0));
         // this.makePlayers();
-        this.deal();
+        console.log('Total players:', this.totalPlayers);
+        this.deal(this.players);
     }
 
-    // createDealer(): Dealer {
-    //     if (!this.dealer) {
-    //         return new Dealer();
-    //     }
-    //     console.warn('There\'s already a dealer!');
-    //     return;
-    // }
-    // 
-    // addDealer(): void {
-    //     this.players.unshift(this.dealer)
-    // }
-    // 
-    // createPlayer(): Player {
-    //     return new Player();
-    // }
-    // 
-    // addPlayer(player: Player): void {
-    //     this.players.push(player);
-    // }
-
-    // makePlayers(): void {
-    //     this.players.push(new Dealer(this, 0));
-    //     for (let i = 1; i < this.totalPlayers; i++) {
-    //         // dealer is position 0
-    //         this.players.push(new Player(this, i));
-    //     }
-    // }
-
-    deal(): void {
+    deal(players): void {
         this.dealer.deal();
-        for (let i = 0; i < this.players.length; i++) {
-            this.deck.moveHandToDiscards(this.players[i]);
-
+        players.forEach((player, i) => {
             console.log('player number:', i);
-            this.players[i].deal();
-            this.wsServer.deal(i, this.players[i].hand);
-        }
+            // player.discard(this.deck);
+            this.deck.moveHandToDiscards(player.hand);
+            player.deal();
+        });
+        this.wsServer.sendHands(players);
         // this.nextPlayer();
     }
 
-    nextPlayer(): void {
-        // this.players[this.curr].gui.disable();
-        this.curr++;
-        if (this.curr < this.totalPlayers) {
-            this.players[this.curr].gui.enable();
-        } else {
-            this.curr = 0;
-            this.players[this.curr].dealerTurn();
-        }
-    }
+    // UNCOMMENT ALL THESE WHEN YOU'VE GOT BASIC COMMUNICATION WORKING
 
-    end(): void {
-        // TODO: Make this work for multiple players
-        const dealer = this.players[0];
-        const player = this.players[1];
+    // nextPlayer(): void {
+    //     this.players[this.curr].gui.disable();
+    //     // this.curr++;
+    //     if (this.curr < this.totalPlayers) {
+    //         this.players[this.curr].gui.enable();
+    //     } else {
+    //         this.curr = 0;
+    //         this.players[this.curr].dealerTurn();
+    //     }
+    // }
 
-        const endText = this.setEndText(dealer, player);
-        const reason = this.setEndReason(dealer, player);
+    // end(): void {
+    //     // TODO: Make this work for multiple players
+    //     const dealer = this.players[0];
+    //     const player = this.players[1];
 
-        this.endState.innerHTML = `<h1>${endText}</h1><h5>${reason}</h5>`;
-        this.endState.classList.toggle('hidden');
-    }
+    //     const endText = this.setEndText(dealer, player);
+    //     const reason = this.setEndReason(dealer, player);
 
-    refresh(): void {
-        this.endState.classList.toggle('hidden');
-        this.curr = 0;
-        this.deal();
-    }
+    //     // this.endState.innerHTML = `<h1>${endText}</h1><h5>${reason}</h5>`;
+    //     // this.endState.classList.toggle('hidden');
+    // }
 
-    setEndText(dealer, player): string {
-        if (!dealer.bust && ((dealer.blackjack && !player.blackjack) || player.bust || player.score < dealer.score)) {
-            return 'You lose!';
-        }
-        if (dealer.bust || (player.blackjack && !dealer.blackjack) || player.score > dealer.score) {
-            return 'You win!';
-        }
-        return 'Tie!';
-    }
+    // refresh(): void {
+    //     // this.endState.classList.toggle('hidden');
+    //     this.curr = 0;
+    //     this.deal();
+    // }
 
-    setEndReason(dealer, player): string {
-        if (player.bust) {
-            return 'Busted!';
-        } else if (player.blackjack) {
-            return 'Blackjack!';
-        } else if (dealer.bust) {
-            return 'Dealer busted!';
-        } else if (dealer.blackjack) {
-            return 'Dealer has blackjack!';
-        } else if (player.score < dealer.score) {
-            return 'Dealer is higher!';
-        } else if (player.score > dealer.score) {
-            return 'Player is higher!';
-        }
-        return null;
-    }
+    // setEndText(dealer, player): string {
+    //     if (!dealer.bust && ((dealer.blackjack && !player.blackjack) || player.bust || player.score < dealer.score)) {
+    //         return 'You lose!';
+    //     }
+    //     if (dealer.bust || (player.blackjack && !dealer.blackjack) || player.score > dealer.score) {
+    //         return 'You win!';
+    //     }
+    //     return 'Tie!';
+    // }
+
+    // setEndReason(dealer, player): string {
+    //     if (player.bust) {
+    //         return 'Busted!';
+    //     } else if (player.blackjack) {
+    //         return 'Blackjack!';
+    //     } else if (dealer.bust) {
+    //         return 'Dealer busted!';
+    //     } else if (dealer.blackjack) {
+    //         return 'Dealer has blackjack!';
+    //     } else if (player.score < dealer.score) {
+    //         return 'Dealer is higher!';
+    //     } else if (player.score > dealer.score) {
+    //         return 'Player is higher!';
+    //     }
+    //     return null;
+    // }
 }

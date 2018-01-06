@@ -87,7 +87,8 @@ export default class Deck {
         }
     }
 
-    public moveHandToDiscards(player): void {
-        this.discards = this.discards.concat(player.hand);
+    // TODO: Replace this with player.discard()?
+    public moveHandToDiscards(hand): void {
+        this.discards = this.discards.concat(hand);
     }
 }

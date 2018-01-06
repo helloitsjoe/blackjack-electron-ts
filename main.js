@@ -15,24 +15,25 @@ function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 400, x: 0, y: 0});
   playerWindow = new BrowserWindow({width: 800, height: 400, x: 0, y: 430});
+  player2Window = new BrowserWindow({width: 800, height: 400, x: 400, y: 430});
+
+  const urlObj = (endpoint = '') => ({
+    pathname: `localhost:8080${endpoint}`,
+    protocol: `http:`,
+    slashes: true
+  });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
-    pathname: 'localhost:8080',
-    protocol: 'http:',
-    slashes: true
-  }))
+  mainWindow.loadURL(url.format(urlObj()));
   setTimeout(() => {
-      playerWindow.loadURL(url.format({
-          pathname: 'localhost:8080/player',
-          protocol: 'http:',
-          slashed: true
-      }));
+    playerWindow.loadURL(url.format(urlObj('/player')));
+    player2Window.loadURL(url.format(urlObj('/player')));
   }, 500);
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
   playerWindow.webContents.openDevTools()
+  player2Window.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

@@ -8,12 +8,15 @@ export default class WSClient {
     // private game: Game;
 
     constructor(host: string, port: number/*, game: Game*/) {
-        this.ws = new WebSocket(`ws://${host}:${port}`);
-        this.ws.hit = this.hit.bind(this);
-        this.ws.endTurn = this.endTurn.bind(this);
-        this.ws.addEventListener('open', this.onOpen.bind(this));
-        this.ws.addEventListener('close', this.onClose.bind(this));
-        this.ws.addEventListener('message', this.onMessage.bind(this));
+        const ws: any = new WebSocket(`ws://${host}:${port}`);
+        ws.hit = this.hit.bind(this);
+        ws.endTurn = this.endTurn.bind(this);
+
+        ws.addEventListener('open', this.onOpen.bind(this));
+        ws.addEventListener('close', this.onClose.bind(this));
+        ws.addEventListener('message', this.onMessage.bind(this));
+
+        this.ws = ws;
         this.initButtons();
         // this.game = game;
     }
@@ -27,6 +30,7 @@ export default class WSClient {
     }
 
     hit(card, position) {
+        console.log(`WSClient.hit`);
         const data = JSON.stringify({
             msg: 'Hit',
             id: position,
@@ -40,18 +44,11 @@ export default class WSClient {
         this.ws.send(data);
     }
 
-    onOpen() {
-
-    }
-
-    onClose() {
-
-    }
-
     onMessage(res) {
         const data = JSON.parse(res.data);
         console.log('DATA:', data);
-        this.id = data.id || this.id;
+        console.log(`data.id:`, data.id);
+        this.id = data.id || this.id; // Why fallback to this.id?
 
         if (data.msg === 'deal') {
             for (let card of data.hand) {
@@ -77,4 +74,8 @@ export default class WSClient {
         const cardBox = document.getElementById('card-box');
         cardBox.innerHTML += `<div class="card">${card.display}</div>`
     }
+
+    onOpen() { }
+
+    onClose() { }
 }
