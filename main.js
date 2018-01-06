@@ -7,8 +7,6 @@ const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 const url = require('url')
 
-// sparkUpServer();
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -22,8 +20,6 @@ function createWindow () {
   mainWindow.loadURL(url.format({
     pathname: 'localhost:8080',
     protocol: 'http:',
-    // pathname: path.join(__dirname, 'index.html'),
-    // protocol: 'file:',
     slashes: true
   }))
   setTimeout(() => {

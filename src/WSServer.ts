@@ -1,29 +1,20 @@
-import WebSocket = require('ws');
+import WebSocket from 'ws';
 import Game from './Game';
 
 export default class WSServer {
 
-    private game: Game;
-    private port: number;
-    private server: WebSocket.Server;
     private connections: WebSocket[] = [];
 
-    constructor(game, port) {
-        this.game = game;
-        this.server = new WebSocket.Server({ port });
-    }
-
-    public init(): void {
-        this.server.on('connection', (ws) => {
+    constructor(game: Game, server: WebSocket.Server) {
+        server.on('connection', (ws) => {
+            console.log('new connex bruh');
             ws.on('message', this.onMessage.bind(null, ws));
             ws.on('close', this.onClose.bind(null, ws));
 
-            console.log('new connex bruh');
-            const playerId = this.game.addPlayer(ws);
             this.connections.push(ws);
-            ws.send(JSON.stringify({
-                id: playerId
-            }));
+
+            const id = game.addPlayer(ws);
+            ws.send(JSON.stringify({ id }));
         });
     }
 

@@ -21,7 +21,7 @@ export default class Player {
         // this.wsClient = new WSClient('localhost', 8081);
         // this.ws = this.wsClient.ws;
 
-        // this.game = game;
+        this.game = game;
         this.deck = game.deck;
         this.position = position;
         this.ws = ws;

@@ -9,7 +9,9 @@ export default class Dealer extends Player {
         while (this.score < 17) {
             this.hit();
         }
+        // Why this if?
         if (this.score < 21) {
+            this.reveal();
             this.game.end();
         }
     }
