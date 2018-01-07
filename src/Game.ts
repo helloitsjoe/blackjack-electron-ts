@@ -10,7 +10,6 @@ const WSS_PORT = 8081;
 
 export default class Game {
 
-    // public ws: WebSocket;
     private wsServer: WebSocket.Server;
     public totalPlayers: number = 1; // Dealer
     public newPlayers: number = 0;
@@ -25,9 +24,9 @@ export default class Game {
     }
 
     public initDealer(): void {
-        // Set up a server, which calls addPlayer on a new connection
-        this.wsServer = new WSServer(this, new WebSocket.Server({ port: WSS_PORT }));
+        // Set up a server, which creates a new Player on a new connection
         console.log(`Dealer: ws server listening on port ${WSS_PORT}`);
+        this.wsServer = new WSServer(this, new WebSocket.Server({ port: WSS_PORT }));
 
         this.deck = new Deck(1);
         
@@ -54,12 +53,11 @@ export default class Game {
     }
 
     deal(players): void {
-        this.dealer.deal();
+        this.dealer.deal(this.deck);
+
         players.forEach((player, i) => {
             console.log('player number:', i);
-            // player.discard(this.deck);
-            this.deck.moveHandToDiscards(player.hand);
-            player.deal();
+            player.deal(this.deck);
         });
         this.wsServer.sendHands(players);
         // this.nextPlayer();

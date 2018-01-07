@@ -4,48 +4,40 @@ import { e } from './utils';
 
 export default class PlayerGUI {
 
-    protected player: Player;
-    protected board: Element;
+    // protected player: Player;
+    // protected board: Element;
     protected cardBox: Element;
     protected buttonBox: Element;
-    protected hitButton: Element;
-    protected stayButton: Element;
+    public hitButton: Element;
+    public stayButton: Element;
     protected infoBox: Element;
-    protected label: Element;
+    // protected label: Element;
     protected score: Element;
     protected endState: Element;
 
-    constructor(player: Player) {
+    constructor() {
         this.hit = this.hit.bind(this);
         this.endTurn = this.endTurn.bind(this);
+
         this.endState = document.getElementById('end-state');
-        this.endState.addEventListener('click', () => { }/*game.refresh*/); // TODO: send 'refresh' intent to game
-        this.player = player;
-        this.init();
+        this.endState.addEventListener('click', () => { /*game.refresh*/ }); // TODO: send 'refresh' intent to game
+
+        this.buttonBox = document.getElementById('button-box');
+        this.infoBox = document.getElementById('info-box');
+        this.cardBox = document.getElementById('card-box');
+
+        this.hitButton = document.getElementById('hit-button');
+        this.stayButton = document.getElementById('stay-button');
     }
 
     init(): void {
-        let position = this.player.position;
-        let boardParent = position > 0 ? document.getElementById('player-list') : document.getElementById('dealer-box');;
-        let infoText = position > 0 ? 'Player: ' : 'Dealer: ';
-
-        this.board = e('div', 'player', `player-${this.player.position}`, boardParent);
-        this.cardBox = e('div', null, null, this.board);
-
-        this.buttonBox = e('div', 'button-box', null, this.board);
-        this.hitButton = e('button', null, null, this.buttonBox, 'Hit');
-        this.stayButton = e('button', null, null, this.buttonBox, 'Stay');
-
-        this.infoBox = e('div', 'info', null, this.board)
-        this.label = e('span', null, null, this.infoBox, infoText);
-        this.score = e('span', null, null, this.infoBox);
+        // No-op for now
     }
 
-    addCard(cardData: Card): Element {
-        this.score.innerHTML = this.player.score.toString();
+    addCard(cardData: Card): void {
+        // this.score.innerHTML = this.player.score.toString();
         let card = e('div', 'card', null, this.cardBox);
         card.innerHTML = cardData.display;
-        return card;
     }
 
     clearCards(): void {
@@ -65,10 +57,10 @@ export default class PlayerGUI {
     }
 
     hit(): void {
-        this.player.hit();
+        // this.player.hit();
     }
 
     endTurn(): void {
-        this.player.endTurn();
+        // this.player.endTurn();
     }
 }

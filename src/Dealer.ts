@@ -1,9 +1,17 @@
 import DealerGUI from "./DealerGUI";
 import Player from "./Player";
+import Game from './Game';
 
 export default class Dealer extends Player {
 
     public gui: DealerGUI;
+
+    constructor(game: Game, ws: WebSocket, position: number) {
+        super(game, ws, position);
+
+        this.gui = new DealerGUI();
+        this.gui.init();
+    }
 
     dealerTurn(): void {
         while (this.score < 17) {
@@ -12,7 +20,7 @@ export default class Dealer extends Player {
         // Why this if?
         if (this.score < 21) {
             this.reveal();
-            this.game.end();
+            // this.game.end();
         }
     }
 

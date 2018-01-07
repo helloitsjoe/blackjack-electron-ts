@@ -25,17 +25,19 @@ export default class Player {
         // this.ws.id = position;
 
         this.hand = [];
-
-        this.gui = position > 0 ? new PlayerGUI(this) : new DealerGUI(this);
-        // this.deal();
     }
 
-    deal(): void {
+    deal(deck): void {
         // move cards from hand to discard
-        // this.deck.discards = this.deck.discards.concat(this.hand);
+        // Maybe move this to a `discard` method, called by game.deal()?
+        deck.discards = [...deck.discards, ...this.hand];
         this.hand.length = 0;
 
-        this.gui.clearCards();
+        // Only Dealer has gui, see if there's a better way to do this.
+        if (this.gui) {
+            this.gui.clearCards();
+        }
+
         this.score = 0;
         this.bust = false;
         this.blackjack = false;
@@ -60,7 +62,12 @@ export default class Player {
         })
 
         this.score += card.value;
-        this.gui.addCard(card);
+
+        // Only Dealer has gui, see if there's a better way to do this.
+        if (this.gui) {
+            this.gui.addCard(card);
+        }
+
         console.log('position', this.position);
         // if (this.ws) {
         //     console.log(this.ws)
@@ -73,8 +80,8 @@ export default class Player {
                 this.blackjack = false;
                 this.bust = true;
             }
-            this.gui.disable();
-            this.game.end();
+            // this.gui.disable();
+            // this.game.end();
         }
         if (times > 1) {
             return this.hit(times - 1);
@@ -85,9 +92,4 @@ export default class Player {
     //     // this.ws.endTurn(this.position);
     //     this.game.nextPlayer();
     // }
-
-    // TODO: Swap deck.moveToDiscards for this
-    discard(deck): void {
-        deck.discards = [...deck.discards, ...this.hand];
-    }
 }
