@@ -1,7 +1,8 @@
 import Game from './Game';
 
 const game = new Game();
-const playButton = document.getElementById('playBtn');
+const playButton = document.getElementById('play-button');
+const infoBox = document.getElementById('info-box');
 
 if (playButton) {
     playButton.addEventListener('click', onPlayClick);
@@ -12,6 +13,7 @@ if (playButton) {
 }
 
 function onPlayClick() {
-    playButton.style.visibility = 'hidden';
+    playButton.classList.add('hidden');
+    infoBox.classList.remove('hidden');
     game.play();
 }

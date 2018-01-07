@@ -6,8 +6,8 @@ export default class Dealer extends Player {
 
     public gui: DealerGUI;
 
-    constructor(game: Game, ws: WebSocket, position: number) {
-        super(game, ws, position);
+    constructor(game: Game, position: number) {
+        super(game, position);
 
         this.gui = new DealerGUI();
         this.gui.init();

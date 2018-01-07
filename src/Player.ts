@@ -6,31 +6,27 @@ import WSClient from './WSClient';
 
 export default class Player {
 
-    private deck: Deck;
     public hand: Card[];
     public score: number = 0;
+    public gui: DealerGUI; // | PlayerGUI
+    private id: number;
+    private deck: Deck;
     private bust: boolean = false;
     private blackjack: boolean = false;
-    protected game: Game;
-    public gui: PlayerGUI | DealerGUI;
-    public position: number;
-    // public wsClient: WSClient;
-    public ws: any;
+    // protected game: Game;
 
-    constructor(game: Game, ws: WebSocket, position: number) {
-        this.game = game;
+    constructor(game: Game, id: number) {
+        // this.game = game;
         this.deck = game.deck;
-        this.position = position;
-        this.ws = ws;
-        // this.ws.id = position;
+        this.id = id;
 
         this.hand = [];
     }
 
-    deal(deck): void {
+    deal(): void {
         // move cards from hand to discard
         // Maybe move this to a `discard` method, called by game.deal()?
-        deck.discards = [...deck.discards, ...this.hand];
+        this.deck.discards = [...this.deck.discards, ...this.hand];
         this.hand.length = 0;
 
         // Only Dealer has gui, see if there's a better way to do this.
@@ -45,7 +41,7 @@ export default class Player {
         this.hit(2);
     }
 
-    hit(times: number = 1): void {
+    hit(times: number = 1): Card {
         if (!this.deck.cards.length) {
             this.deck.shuffle();
         }
@@ -53,10 +49,9 @@ export default class Player {
         let card = this.deck.cards.pop();
         this.hand.push(card);
 
-        // Check for aces, make them worth 1 if they would
-        // push the total score over 21
+        // Check for aces, make them worth 1 if they would push the total score over 21
         this.hand.forEach((c) => {
-            if (c.value === 11 && this.score + c.value > 21) {
+            if (c.value === 11 && (this.score + c.value > 21)) {
                 c.value = 1;
             }
         })
@@ -67,12 +62,6 @@ export default class Player {
         if (this.gui) {
             this.gui.addCard(card);
         }
-
-        console.log('position', this.position);
-        // if (this.ws) {
-        //     console.log(this.ws)
-        //     this.ws.hit(card, this.position); // TODO: Find a better way to separate dealer/player hit
-        // }
 
         if (this.score > 20) {
             this.blackjack = true;
@@ -86,6 +75,7 @@ export default class Player {
         if (times > 1) {
             return this.hit(times - 1);
         }
+        return card;
     }
 
     // endTurn(): void {

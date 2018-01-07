@@ -1,71 +1,96 @@
 import WebSocket from 'ws';
 import Game from './Game';
 import Player from './Player';
+import { Card } from './Deck';
 
-interface MessageToServer {
-    type: 'HIT' | 'STAY' | 'CONNECTED' | 'DISCONNECTED'; // | 'DEAL'?
+export interface Message {
+    type: MessageType;
+    id: number;
+    cards: Card[];
     msg?: string;
-    id?: number;
     data?: any; // Card data?
 }
 
-interface MessageToClient {
-    type: string;
-    msg?: string;
-    id?: number;
-    data?: any; // Card data?
+export enum MessageType {
+    CONNECTED = 'CONNECTED',
+    DISCONNECTED = 'DISCONNECTED',
+    HIT = 'HIT',
+    STAY = 'STAY',
+    BUST = 'BUST',
+    BLACKJACK = 'BLACKJACK',
+    // DEAL = 'DEAL',
 }
-
 
 export default class WSServer {
 
     private connections: WebSocket[] = [];
-    private currID: number = 0;
+    private clientID: number = 0;
 
-    constructor(game: Game, server: WebSocket.Server) {
+    constructor(private game: Game, server: WebSocket.Server) {
         server.on('connection', (ws) => {
-            ws.on('message', this.onMessage.bind(null, ws));
+            ws.on('message', this.onMessage.bind(this, ws));
             ws.on('close', this.onClose.bind(this, ws, game));
-            // Add id to ws? ws.id = currID;
-            
+
             this.connections.push(ws);
+            this.clientID++;
+            ws.id = this.clientID;
 
-            this.currID++;
-
-            game.totalPlayers++;
-            game.players.push(new Player(game, ws, this.currID));
+            this.game.totalPlayers++;
+            this.game.players.push(new Player(game, this.clientID));
 
             console.log(`Player joined! Total: ${game.totalPlayers}`);
 
-            ws.send(JSON.stringify({ id: this.currID }));
+            ws.send(JSON.stringify({ id: this.clientID, type: MessageType.CONNECTED }));
         });
     }
 
     public sendHands(players): void {
         this.connections.forEach((connex, i) => {
-            connex.send(JSON.stringify({ type: 'HIT', cards: players[i].hand }))
+            const type = 'HIT';
+            const cards = players[i].hand;
+            const id = connex.id;
+
+            connex.send(JSON.stringify({ type, cards, id }));
         });
     }
 
     private onMessage(ws, data) {
-        let json = JSON.parse(data);
-        let res = { msg: null, id: json.id };
+        const json = JSON.parse(data);
         console.log('json:', json);
+        const id = json.id;
+        const player = this.game.players.find(player => player.id === id);
 
-        if (json.id) {
-            if (json.type === 'HIT') {
-                res.msg = `Here's card data for ${json.id}`;
-                // res.cards = Cards from game
-            } else if (json.msg === 'End Turn') {
-                res.msg = `Ending turn ${json.id}`;
+        let msg = 'No message';
+        let cards = null;
+        let type = json.type;
+
+        switch (json.type) {
+            case MessageType.HIT:
+                // Either send one card at a time, or the whole hand
+                cards = [ player.hit(1) ];
+
+                if (player.bust) {
+                    type = MessageType.BUST;
+                    msg = `Player ${id} BUSTED!`;
+                    console.log(`cards:`, cards[0].display);
+                    // End turn
+                } else if (player.blackjack) {
+                    type = MessageType.BLACKJACK;
+                    msg = `Player ${id} has blackjack!`;
+                } else {
+                    msg = `Card data for ${id}: ${cards[0].display}`
+                }
+
+                break;
+            case MessageType.STAY:
+                msg = `Ending turn: ${id}`;
                 // call nextPlayer
-            } else {
-                res.msg = `hi ${json.id}`;
-            }
-        } else {
-            res.msg `Error: JSON needs an ID`;
+                break;
+            default:
+                msg = `hi ${id}`;
         }
-        ws.send(JSON.stringify(res));
+        console.log(`player:`, player);
+        ws.send(JSON.stringify({ msg, cards, type }));
     }
 
     private onClose(ws, game) {

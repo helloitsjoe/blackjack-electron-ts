@@ -4,20 +4,17 @@ import { e } from './utils';
 
 export default class PlayerGUI {
 
-    // protected player: Player;
-    // protected board: Element;
-    protected cardBox: Element;
-    protected buttonBox: Element;
-    public hitButton: Element;
-    public stayButton: Element;
-    protected infoBox: Element;
-    // protected label: Element;
-    protected score: Element;
-    protected endState: Element;
+    // protected score: HTMLElement;
+    protected cardBox: HTMLElement;
+    protected buttonBox: HTMLElement;
+    protected infoBox: HTMLElement;
+    protected endState: HTMLElement;
+    public hitButton: HTMLElement;
+    public stayButton: HTMLElement;
 
     constructor() {
-        this.hit = this.hit.bind(this);
-        this.endTurn = this.endTurn.bind(this);
+        // this.hit = this.hit.bind(this);
+        // this.endTurn = this.endTurn.bind(this);
 
         this.endState = document.getElementById('end-state');
         this.endState.addEventListener('click', () => { /*game.refresh*/ }); // TODO: send 'refresh' intent to game
@@ -44,23 +41,23 @@ export default class PlayerGUI {
         this.cardBox.innerHTML = '';
     }
 
-    enable(): void {
-        this.hitButton.addEventListener('click', this.hit);
-        this.stayButton.addEventListener('click', this.endTurn);
-    }
+    // enable(): void {
+    //     this.hitButton.addEventListener('click', this.hit);
+    //     this.stayButton.addEventListener('click', this.endTurn);
+    // }
 
-    disable(): void {
-        if (this.buttonBox) {
-            this.hitButton.removeEventListener('click', this.hit);
-            this.stayButton.removeEventListener('click', this.endTurn);
-        }
-    }
+    // disable(): void {
+    //     if (this.buttonBox) {
+    //         this.hitButton.removeEventListener('click', this.hit);
+    //         this.stayButton.removeEventListener('click', this.endTurn);
+    //     }
+    // }
 
-    hit(): void {
-        // this.player.hit();
-    }
+    // hit(): void {
+    //     // this.player.hit();
+    // }
 
-    endTurn(): void {
-        // this.player.endTurn();
-    }
+    // endTurn(): void {
+    //     // this.player.endTurn();
+    // }
 }

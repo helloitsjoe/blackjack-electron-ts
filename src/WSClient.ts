@@ -1,4 +1,5 @@
 import PlayerGUI from './PlayerGUI';
+import { MessageType } from './WSServer';
 
 export default class WSClient {
 
@@ -38,13 +39,21 @@ export default class WSClient {
     onMessage(res) {
         const json = JSON.parse(res.data);
         console.log('DATA:', json);
-        // console.log(`data.id:`, data.id);
         this.id = json.id || this.id; // Why fallback to this.id?
 
-        if (json.type === 'HIT') {
-            for (let card of json.cards) {
-                this.gui.addCard(card);
-            }
+        switch (json.type) {
+            case MessageType.HIT:
+            case MessageType.BUST:
+            case MessageType.BLACKJACK:
+                for (let card of json.cards) {
+                    this.gui.addCard(card);
+                };
+                break;
+            case MessageType.STAY:
+                // Disable buttons
+                break;
+            default:
+                console.log(`No matching MessageType. msg:`, json.msg);
         }
     }
 

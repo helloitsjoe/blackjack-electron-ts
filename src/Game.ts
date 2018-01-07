@@ -30,36 +30,29 @@ export default class Game {
 
         this.deck = new Deck(1);
         
-        this.dealer = new Dealer(this, null, 0);
+        this.dealer = new Dealer(this, 0);
         // this.players.push(this.dealer);
     }
 
     public initPlayer(): void {
         console.log('Player, setting up ws client');
-
         const ws = new WSClient(HOST, WSS_PORT);
-        // this.players.push(new Player(this, ws, this.totalPlayers++));
     }
 
     play(): void {
-        // TODO: set up turns, so hit/stay only works when it's that player's turn
-        // TODO: Add players
-        // this.totalPlayers += this.newPlayers;
-        // this.deck = new Deck(1);
-        // this.players.push(new Dealer(this, null, 0));
-        // this.makePlayers();
         console.log('Total players:', this.totalPlayers);
         this.deal(this.players);
     }
 
     deal(players): void {
-        this.dealer.deal(this.deck);
+        this.dealer.deal();
 
         players.forEach((player, i) => {
             console.log('player number:', i);
-            player.deal(this.deck);
+            player.deal();
         });
         this.wsServer.sendHands(players);
+        // if dealer has blackjack, send a message to all players
         // this.nextPlayer();
     }
 
