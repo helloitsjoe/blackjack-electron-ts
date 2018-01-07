@@ -1,78 +1,51 @@
-// import Game from './Game';
+import PlayerGUI from './PlayerGUI';
 
 export default class WSClient {
 
-    public ws: any;
+    // public ws: any;
     public players: any;
     private id: number;
+    private gui: PlayerGUI;
     // private game: Game;
 
     constructor(host: string, port: number/*, game: Game*/) {
         const ws: any = new WebSocket(`ws://${host}:${port}`);
-        ws.hit = this.hit.bind(this);
-        ws.endTurn = this.endTurn.bind(this);
 
         ws.addEventListener('open', this.onOpen.bind(this));
         ws.addEventListener('close', this.onClose.bind(this));
         ws.addEventListener('message', this.onMessage.bind(this));
 
-        this.ws = ws;
-        this.initButtons();
-        // this.game = game;
+        this.hit = this.hit.bind(this, ws);
+        this.endTurn = this.endTurn.bind(this, ws);
+
+        this.gui = new PlayerGUI();
+        this.gui.init(); // No-op for now
+
+        this.gui.hitButton.addEventListener('click', this.hit);
+        this.gui.stayButton.addEventListener('click', this.endTurn);
     }
 
-    private initButtons() {
-        const hitButton = document.getElementById('hit-button');
-        hitButton.addEventListener('click', () => {
-            console.log('hit from', this.id)
-            this.ws.send(JSON.stringify({ msg: 'HitMe', id: this.id }));
-        });
+    hit(ws) {
+        console.log('Hit me!')
+        ws.send(JSON.stringify({ type: 'HIT', id: this.id }));
     }
 
-    hit(card, position) {
-        console.log(`WSClient.hit`);
-        const data = JSON.stringify({
-            msg: 'Hit',
-            id: position,
-            card: card,
-        });
-        this.ws.send(data);
-    }
-
-    endTurn(position) {
-        const data = JSON.stringify({ msg: 'End Turn', id: position });
-        this.ws.send(data);
+    endTurn(ws) {
+        console.log('end turn id:', this.id)
+        ws.send(JSON.stringify({ type: 'STAY', id: this.id }));
     }
 
     onMessage(res) {
-        const data = JSON.parse(res.data);
-        console.log('DATA:', data);
-        console.log(`data.id:`, data.id);
-        this.id = data.id || this.id; // Why fallback to this.id?
+        const json = JSON.parse(res.data);
+        console.log('DATA:', json);
+        // console.log(`data.id:`, data.id);
+        this.id = json.id || this.id; // Why fallback to this.id?
 
-        if (data.msg === 'deal') {
-            for (let card of data.hand) {
-                this.addCard(card);
+        if (json.type === 'HIT') {
+            for (let card of json.cards) {
+                this.gui.addCard(card);
             }
         }
-        // if (data.msg === 'hit') {
-        //     console.log('hit pingback')
-        //     this.addCard(data.card);
-        // }
-
-        // if (data.msg === 'new player') {
-        //     console.log('NEW ONE');
-        //     this.game.newPlayers += 1;
-        // } else if (data.msg === 'HitMe') {
-        //     this.game.players[data.id].hit();
-        // }
-        // console.log('players:', data.totalPlayers);
-        // this.players = data.totalPlayers;
-    }
-
-    private addCard(card) {
-        const cardBox = document.getElementById('card-box');
-        cardBox.innerHTML += `<div class="card">${card.display}</div>`
     }
 
     onOpen() { }

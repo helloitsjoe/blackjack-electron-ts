@@ -1,6 +1,8 @@
 - [X] Convert to TS
     - [X] webpack
 - [ ] WebSockets
+    - [ ] Protocol
     - [ ] Single player local
+    - [ ] Multi player local
     - [ ] Single player remote
     - [ ] Multi player remote

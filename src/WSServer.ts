@@ -2,6 +2,21 @@ import WebSocket from 'ws';
 import Game from './Game';
 import Player from './Player';
 
+interface MessageToServer {
+    type: 'HIT' | 'STAY' | 'CONNECTED' | 'DISCONNECTED'; // | 'DEAL'?
+    msg?: string;
+    id?: number;
+    data?: any; // Card data?
+}
+
+interface MessageToClient {
+    type: string;
+    msg?: string;
+    id?: number;
+    data?: any; // Card data?
+}
+
+
 export default class WSServer {
 
     private connections: WebSocket[] = [];
@@ -11,48 +26,46 @@ export default class WSServer {
         server.on('connection', (ws) => {
             ws.on('message', this.onMessage.bind(null, ws));
             ws.on('close', this.onClose.bind(this, ws, game));
-            // Add id to ws? ws.id = newID;
+            // Add id to ws? ws.id = currID;
             
             this.connections.push(ws);
 
-            const id = this.addPlayer(ws, game);
+            this.currID++;
+
+            game.totalPlayers++;
+            game.players.push(new Player(game, ws, this.currID));
+
             console.log(`Player joined! Total: ${game.totalPlayers}`);
 
-            ws.send(JSON.stringify({ id }));
+            ws.send(JSON.stringify({ id: this.currID }));
         });
-    }
-
-    public addPlayer(ws, game) {
-        this.currID++;
-        game.totalPlayers++;
-        game.players.push(new Player(game, ws, this.currID));
-        return this.currID;
     }
 
     public sendHands(players): void {
         this.connections.forEach((connex, i) => {
-            connex.send(JSON.stringify({ msg: 'deal', hand: players[i].hand }))
+            connex.send(JSON.stringify({ type: 'HIT', cards: players[i].hand }))
         });
     }
 
     private onMessage(ws, data) {
-        // data = {
-        //     msg: string,
-        //     id: position,
-        //     card: cardData
-        // }
         let json = JSON.parse(data);
+        let res = { msg: null, id: json.id };
         console.log('json:', json);
-        // const dealer = this.connections[0];
-        // dealer.send(JSON.stringify(json));
+
         if (json.id) {
-            if (json.msg === 'HitMe') {
-                console.log('hitme');
-                ws.send(JSON.stringify({ msg: 'hi' }));
+            if (json.type === 'HIT') {
+                res.msg = `Here's card data for ${json.id}`;
+                // res.cards = Cards from game
+            } else if (json.msg === 'End Turn') {
+                res.msg = `Ending turn ${json.id}`;
+                // call nextPlayer
             } else {
-                this.connections[json.id].send(data);
+                res.msg = `hi ${json.id}`;
             }
+        } else {
+            res.msg `Error: JSON needs an ID`;
         }
+        ws.send(JSON.stringify(res));
     }
 
     private onClose(ws, game) {
