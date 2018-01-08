@@ -90,7 +90,7 @@ export default class WSServer {
                 msg = `hi ${id}`;
         }
         console.log(`player:`, player);
-        ws.send(JSON.stringify({ msg, cards, type }));
+        ws.send(JSON.stringify({ msg, cards, type, id }));
     }
 
     private onClose(ws, game) {

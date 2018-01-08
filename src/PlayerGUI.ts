@@ -17,7 +17,7 @@ export default class PlayerGUI {
         // this.endTurn = this.endTurn.bind(this);
 
         this.endState = document.getElementById('end-state');
-        this.endState.addEventListener('click', () => { /*game.refresh*/ }); // TODO: send 'refresh' intent to game
+        // this.endState.addEventListener('click', () => { /*game.refresh*/ }); // TODO: send 'refresh' intent to game
 
         this.buttonBox = document.getElementById('button-box');
         this.infoBox = document.getElementById('info-box');

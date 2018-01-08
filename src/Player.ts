@@ -19,20 +19,10 @@ export default class Player {
         // this.game = game;
         this.deck = game.deck;
         this.id = id;
-
-        this.hand = [];
     }
 
     deal(): void {
-        // move cards from hand to discard
-        // Maybe move this to a `discard` method, called by game.deal()?
-        this.deck.discards = [...this.deck.discards, ...this.hand];
-        this.hand.length = 0;
-
-        // Only Dealer has gui, see if there's a better way to do this.
-        if (this.gui) {
-            this.gui.clearCards();
-        }
+        this.hand = [];
 
         this.score = 0;
         this.bust = false;
@@ -50,11 +40,11 @@ export default class Player {
         this.hand.push(card);
 
         // Check for aces, make them worth 1 if they would push the total score over 21
-        this.hand.forEach((c) => {
-            if (c.value === 11 && (this.score + c.value > 21)) {
+        this.hand.forEach(c => {
+            if (c.value === 11 && ((this.score + c.value) > 21)) {
                 c.value = 1;
             }
-        })
+        });
 
         this.score += card.value;
 
@@ -76,6 +66,15 @@ export default class Player {
             return this.hit(times - 1);
         }
         return card;
+    }
+
+    public discard(deck: Deck): void {
+        // Only Dealer has gui, see if there's a better way to do this.
+        if (this.gui) {
+            this.gui.clearCards();
+        }
+        // move cards from hand to discard
+        deck.discards = [...deck.discards, ...this.hand];
     }
 
     // endTurn(): void {

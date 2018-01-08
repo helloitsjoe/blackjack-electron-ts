@@ -1,5 +1,6 @@
 import PlayerGUI from './PlayerGUI';
-import { MessageType } from './WSServer';
+import { Message, MessageType } from './WSServer';
+import * as WebSocket from 'ws';
 
 export default class WSClient {
 
@@ -26,20 +27,23 @@ export default class WSClient {
         this.gui.stayButton.addEventListener('click', this.endTurn);
     }
 
-    hit(ws) {
-        console.log('Hit me!')
+    hit(ws): void {
+        console.log('Hit me!');
         ws.send(JSON.stringify({ type: 'HIT', id: this.id }));
     }
 
-    endTurn(ws) {
-        console.log('end turn id:', this.id)
+    endTurn(ws): void {
+        console.log('end turn id:', this.id);
         ws.send(JSON.stringify({ type: 'STAY', id: this.id }));
     }
 
-    onMessage(res) {
+    onMessage(res: Message): void {
         const json = JSON.parse(res.data);
         console.log('DATA:', json);
-        this.id = json.id || this.id; // Why fallback to this.id?
+
+        if (!json.id) {
+            console.error(`No id provided!`);
+        }
 
         switch (json.type) {
             case MessageType.HIT:
@@ -51,6 +55,10 @@ export default class WSClient {
                 break;
             case MessageType.STAY:
                 // Disable buttons
+                break;
+            case MessageType.CONNECTED:
+                this.id = json.id;
+                console.log(`Connected to server. ID: ${this.id}`);
                 break;
             default:
                 console.log(`No matching MessageType. msg:`, json.msg);

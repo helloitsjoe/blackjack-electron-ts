@@ -1,9 +1,9 @@
 import Deck from './Deck';
 import Player from './Player';
 import Dealer from './Dealer';
-import * as WebSocket from 'ws';
 import WSServer from './WSServer';
 import WSClient from './WSClient';
+import * as WebSocket from 'ws';
 
 const HOST = 'localhost';
 const WSS_PORT = 8081;
@@ -12,7 +12,6 @@ export default class Game {
 
     private wsServer: WebSocket.Server;
     public totalPlayers: number = 1; // Dealer
-    public newPlayers: number = 0;
     public dealer: Dealer;
     public players: any[] = []; // TODO: No any
     private curr: number = 0;
@@ -44,14 +43,17 @@ export default class Game {
         this.deal(this.players);
     }
 
-    deal(players): void {
-        this.dealer.deal();
-
+    deal(players: Player[]): void {
+        this.dealer.discard(this.deck);
+        
         players.forEach((player, i) => {
             console.log('player number:', i);
+            player.discard(this.deck);
             player.deal();
         });
         this.wsServer.sendHands(players);
+
+        this.dealer.deal();
         // if dealer has blackjack, send a message to all players
         // this.nextPlayer();
     }
