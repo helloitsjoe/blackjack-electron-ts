@@ -1,4 +1,4 @@
-const main = require('../index.js');
+const main = require('../index');
 global.main = main;
 
 describe('Blackjack', () => {

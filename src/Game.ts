@@ -1,14 +1,14 @@
-import Deck from './Deck';
-import Player from './Player';
-import Dealer from './Dealer';
-import WSServer from './WSServer';
-import WSClient from './WSClient';
+import { Deck } from './Deck';
+import { Player } from './Player';
+import { Dealer } from './Dealer';
+import { WSServer } from './WSServer';
+import { WSClient } from './WSClient';
 import * as WebSocket from 'ws';
 
 const HOST = 'localhost';
 const WSS_PORT = 8081;
 
-export default class Game {
+export class Game {
 
     private wsServer: WebSocket.Server;
     public totalPlayers: number = 1; // Dealer

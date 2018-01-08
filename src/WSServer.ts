@@ -1,7 +1,7 @@
-import WebSocket from 'ws';
-import Game from './Game';
-import Player from './Player';
+import { Game } from './Game';
+import { Player } from './Player';
 import { Card } from './Deck';
+import * as WebSocket from 'ws';
 
 export interface Message {
     type: MessageType;
@@ -21,7 +21,7 @@ export enum MessageType {
     // DEAL = 'DEAL',
 }
 
-export default class WSServer {
+export class WSServer {
 
     private connections: WebSocket[] = [];
     private clientID: number = 0;

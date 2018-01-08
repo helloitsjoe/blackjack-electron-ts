@@ -1,8 +1,8 @@
 import { Card } from './Deck';
-import Player from './Player';
+import { Player } from './Player';
 import { e } from './utils';
 
-export default class PlayerGUI {
+export class PlayerGUI {
 
     // protected score: HTMLElement;
     protected cardBox: HTMLElement;

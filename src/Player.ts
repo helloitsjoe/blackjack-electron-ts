@@ -1,10 +1,10 @@
-import PlayerGUI from './PlayerGUI';
-import DealerGUI from './DealerGUI';
-import Game from './Game';
-import Deck, { Card } from './Deck';
-import WSClient from './WSClient';
+import { PlayerGUI } from './PlayerGUI';
+import { DealerGUI } from './DealerGUI';
+import { Game } from './Game';
+import { Deck, Card } from './Deck';
+import { WSClient } from './WSClient';
 
-export default class Player {
+export class Player {
 
     public hand: Card[];
     public score: number = 0;

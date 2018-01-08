@@ -1,8 +1,8 @@
 import { Card } from './Deck';
-import PlayerGUI from './PlayerGUI';
-import Player from './Player';
+import { PlayerGUI } from './PlayerGUI';
+import { Player } from './Player';
 
-export default class DealerGUI extends PlayerGUI {
+export class DealerGUI extends PlayerGUI {
 
     addCard(cardData: Card): void {
         super.addCard(cardData);

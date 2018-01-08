@@ -1,8 +1,8 @@
-import DealerGUI from "./DealerGUI";
-import Player from "./Player";
-import Game from './Game';
+import { DealerGUI } from "./DealerGUI";
+import { Player } from "./Player";
+import { Game } from './Game';
 
-export default class Dealer extends Player {
+export class Dealer extends Player {
 
     public gui: DealerGUI;
 

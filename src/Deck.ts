@@ -5,7 +5,7 @@ export interface Card {
     display: string;
 }
 
-export default class Deck {
+export class Deck {
 
     public cards: Card[] = [];
     public discards: Card[] = [];

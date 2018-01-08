@@ -1,4 +1,4 @@
-import Game from './Game';
+import { Game } from './Game';
 
 const game = new Game();
 const playButton = document.getElementById('play-button');

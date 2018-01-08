@@ -1,8 +1,8 @@
-import PlayerGUI from './PlayerGUI';
+import { PlayerGUI } from './PlayerGUI';
 import { Message, MessageType } from './WSServer';
 import * as WebSocket from 'ws';
 
-export default class WSClient {
+export class WSClient {
 
     // public ws: any;
     public players: any;

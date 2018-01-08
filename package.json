@@ -8,7 +8,7 @@
     "server": "node src/server/server.js",
     "watch": "node_modules/.bin/webpack --watch",
     "start": "electron .",
-    "test": "mocha -r ./tests/testHelper.js ./tests/index.js"
+    "test": "mocha --require ./tests/testHelper.js ./tests/index.js"
   },
   "keywords": [
     "typescript",
