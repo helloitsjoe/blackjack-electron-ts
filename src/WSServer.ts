@@ -67,7 +67,7 @@ export class WSServer {
         switch (json.type) {
             case MessageType.HIT:
                 // Either send one card at a time, or the whole hand
-                cards = [ player.hit(1) ];
+                cards = [player.hit(1)];
 
                 if (player.bust) {
                     type = MessageType.BUST;

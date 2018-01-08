@@ -28,7 +28,7 @@ export class Game {
         this.wsServer = new WSServer(this, new WebSocket.Server({ port: WSS_PORT }));
 
         this.deck = new Deck(1);
-        
+
         this.dealer = new Dealer(this, 0);
         // this.players.push(this.dealer);
     }
@@ -45,7 +45,7 @@ export class Game {
 
     deal(players: Player[]): void {
         this.dealer.discard(this.deck);
-        
+
         players.forEach((player, i) => {
             console.log('player number:', i);
             player.discard(this.deck);

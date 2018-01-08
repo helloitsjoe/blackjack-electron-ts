@@ -41,8 +41,10 @@ export class Player {
 
         // Check for aces, make them worth 1 if they would push the total score over 21
         this.hand.forEach(c => {
-            if (c.value === 11 && ((this.score + c.value) > 21)) {
+            console.log(`${this.id} c.value:`, c.value);
+            if (c.value === 11 && ((this.score + card.value) > 21)) {
                 c.value = 1;
+                this.score -= 10;
             }
         });
 
