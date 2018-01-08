@@ -1,8 +1,10 @@
 - [X] Convert to TS
     - [X] webpack
 - [ ] WebSockets
-    - [ ] Protocol
+    - [X] Protocol
     - [ ] Single player local
+        - [ ] End screen
     - [ ] Multi player local
     - [ ] Single player remote
     - [ ] Multi player remote
+- [ ] Tests
