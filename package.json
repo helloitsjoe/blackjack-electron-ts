@@ -8,7 +8,7 @@
     "server": "node src/server/server.js",
     "watch": "node_modules/.bin/webpack --watch",
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -r ./tests/testHelper.js ./tests/index.js"
   },
   "keywords": [
     "typescript",
@@ -18,7 +18,10 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^8.0.33",
+    "chai": "^4.1.2",
     "express": "^4.16.1",
+    "jsdom": "^11.5.1",
+    "mocha": "^4.1.0",
     "nodemon": "^1.14.8",
     "ts-loader": "^2.3.2",
     "typescript": "^2.4.2",

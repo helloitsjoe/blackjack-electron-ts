@@ -6,7 +6,6 @@ const infoBox = document.getElementById('info-box');
 
 if (playButton) {
     playButton.addEventListener('click', onPlayClick);
-    
     game.initDealer();
 } else {
     game.initPlayer();
@@ -17,3 +16,12 @@ function onPlayClick() {
     infoBox.classList.remove('hidden');
     game.play();
 }
+
+export * from './Dealer';
+export * from './DealerGUI';
+export * from './Deck';
+export * from './Game';
+export * from './Player';
+export * from './PlayerGUI';
+export * from './WSClient';
+export * from './WSServer';
