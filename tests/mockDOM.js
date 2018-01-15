@@ -1,13 +1,11 @@
-<!DOCTYPE html>
+const jsdom = require('jsdom');
+const { JSDOM } = jsdom;
+
+const { document } = (new JSDOM(`
+<!doctype html>
 <html>
-
-<head>
-    <meta charset="UTF-8">
-    <link href="./css/skeleton.css" type="text/css" rel="stylesheet">
-    <title>BlackJack</title>
-</head>
-
 <body>
+    <div id="test-dom"></div>
     <div class="container" id="dealer">
         <h1>Blackjack!</h1>
         <button id="play-button">Play</button>
@@ -26,7 +24,14 @@
         </div>
     </div>
     <div class="hidden" id="end-state"></div>
-    <script src="./index.js"></script>
 </body>
+</html>`)).window;
 
-</html>
+global.document = document;
+global.window = document.defaultView;
+
+Object.keys(window).forEach(key => {
+    if (!(key in global)) {
+        global[key] = window[key];
+    }
+});

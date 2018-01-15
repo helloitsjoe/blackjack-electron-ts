@@ -1,20 +1,30 @@
-import DealerGUI from "./DealerGUI";
-import Player from "./Player";
+import { DealerGUI } from "./DealerGUI";
+import { Player } from "./Player";
+import { Game } from './Game';
 
-export default class Dealer extends Player {
+export class Dealer extends Player {
 
-    public gui:DealerGUI;
+    public gui: DealerGUI;
 
-    dealerTurn():void {
+    constructor(game: Game, position: number) {
+        super(game, position);
+
+        this.gui = new DealerGUI();
+        this.gui.init();
+    }
+
+    dealerTurn(): void {
         while (this.score < 17) {
-            this.hit();
+            this.hit(this.deck.deal());
         }
+        // Why this if?
         if (this.score < 21) {
-            this.game.end();
+            this.reveal();
+            // this.game.end();
         }
     }
 
-    reveal():void {
+    reveal(): void {
         this.gui.reveal(this.hand[0]);
     }
 }

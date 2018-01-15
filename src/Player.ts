@@ -1,81 +1,81 @@
-import PlayerGUI from './PlayerGUI';
-import DealerGUI from './DealerGUI';
-import Game from './Game';
-import Deck, { Card } from './Deck';
-import WSClient from './WSClient';
+import { PlayerGUI } from './PlayerGUI';
+import { DealerGUI } from './DealerGUI';
+import { Game } from './Game';
+import { Deck, Card } from './Deck';
+import { WSClient } from './WSClient';
 
-export default class Player {
+export class Player {
 
-    private deck:Deck;
-    public hand:Card[];
-    public score:number = 0;
-    private bust:boolean = false;
-    private blackjack:boolean = false;
-    protected game:Game;
-    public gui:PlayerGUI|DealerGUI;
-    public position:number;
-    public ws: any;
+    public hand: Card[] = [];
+    public score: number = 0;
+    public gui: DealerGUI; // | PlayerGUI
+    protected deck: Deck;
+    private id: number;
+    private bust: boolean = false;
+    private blackjack: boolean = false;
+    // protected game: Game;
 
-    constructor(game:Game, position:number) {
-        this.game = game;
+    constructor(game: Game, id: number) {
+        // this.game = game;
         this.deck = game.deck;
-        this.position = position;
-        this.ws = game.ws;
-        this.ws.id = position;
-
-        this.hand = [];
-
-        this.gui = position > 0 ? new PlayerGUI(this) : new DealerGUI(this);
+        this.id = id;
     }
 
-    deal():void {
-        // move cards from hand to discard
-        this.deck.discards = this.deck.discards.concat(this.hand);
-        this.hand.length = 0;
-
-        // clear card data
-        this.gui.clearCards();
+    public deal(): void {
         this.score = 0;
         this.bust = false;
         this.blackjack = false;
 
-        this.hit(2);
+        this.hit(this.deck.deal());
+        this.hit(this.deck.deal());
     }
 
-    hit(times:number = 1):void {
-        if (!this.deck.cards.length) {
-            this.deck.shuffle();
+    public hit(card: Card): Card {
+        this.hand = [...this.hand, card];
+        this.score = this.score += card.value;
+        this.checkScore();
+
+        // Only Dealer has gui, see if there's a better way to do this.
+        if (this.gui) {
+            this.gui.addCard(card);
         }
 
-        let card = this.deck.cards.pop();
-        this.hand.push(card);
+        return card;
+    }
 
-        // Check for aces, make them worth 1 if they would
-        // push the total score over 21
-        this.hand.forEach((c) => {
-            if (c.value === 11 && this.score + c.value > 21) {
+    public discard(): Card[] {
+        // Only Dealer has gui, see if there's a better way to do this.
+        if (this.gui) {
+            this.gui.clearCards();
+        }
+        // move cards from hand to discard
+        const discards = this.hand.slice();
+        this.hand = [];
+        return discards;
+    }
+
+    private checkScore(): void {
+        // Check for aces, make them worth 1 if they would push the total score over 21
+        this.hand.forEach(c => {
+            if ((c.value === 11) && (this.score > 21)) {
                 c.value = 1;
+                this.score -= 10;
             }
-        })
-
-        this.score += card.value;
-        this.gui.addCard(card);
-
+        });
+        
         if (this.score > 20) {
             this.blackjack = true;
             if (this.score > 21) {
                 this.blackjack = false;
                 this.bust = true;
             }
-            this.gui.disable();
-            this.game.end();
-        }
-        if (times > 1) {
-            return this.hit(times -1);
+            // this.gui.disable();
+            // this.game.end();
         }
     }
 
-    endTurn():void {
-        this.game.nextPlayer();
-    }
+    // endTurn(): void {
+    //     // this.ws.endTurn(this.position);
+    //     this.game.nextPlayer();
+    // }
 }

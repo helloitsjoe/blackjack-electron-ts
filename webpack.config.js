@@ -1,7 +1,11 @@
 module.exports = {
     entry: "./src/index.ts",
+    target: "node",
+    // target: "web",
     output: {
-        filename: "index.js"
+        filename: "index.js",
+        library: "",
+        libraryTarget: "commonjs2"
     },
     resolve: {
         // Add '.ts' and '.tsx' as a resolvable extension.

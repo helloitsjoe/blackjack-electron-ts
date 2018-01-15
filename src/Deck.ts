@@ -1,18 +1,18 @@
 export interface Card {
-    suit:string;
-    value:number;
-    face:string;
-    toString:() => string;
+    suit: string;
+    value: number;
+    face: string;
+    display: string;
 }
 
-export default class Deck {
+export class Deck {
 
-    public cards:Card[] = [];
-    public discards:Card[] = [];
+    public cards: Card[] = [];
+    public discards: Card[] = [];
 
-    constructor(numPacks:number) {
-        this.init(numPacks);
-        this.shuffle();
+    constructor() {
+        // this.init(numPacks);
+        // this.shuffle();
 
         // debug
         // this.cards.forEach((card) => {
@@ -21,7 +21,7 @@ export default class Deck {
         // console.log(this.cards.length)
     }
 
-    init(numPacks:number):void {
+    init(numPacks: number): void {
         const suits = {
             clubs: 0,
             hearts: 1,
@@ -30,7 +30,7 @@ export default class Deck {
         }
 
         const faces = (val) => {
-            switch(val) {
+            switch (val) {
                 case 1:
                     return 'A';
                 case 11:
@@ -51,23 +51,24 @@ export default class Deck {
                 // push 13 cards
                 for (let i = 1; i <= 13; i++) {
                     let value = i > 10 ? 10 : (i === 1 ? 11 : i);
-                    let card:Card = {
+                    let display = `${faces(i)}</br>${suit}`;
+                    let card: Card = {
                         value,
+                        display,
                         suit: suits[suit],
                         face: faces(i),
-                        toString: () => `${faces(i)}</br>${suit}`
                     };
-                    this.cards.push(card);
+                    this.cards = [...this.cards, card];
                 }
             }
         }
     }
 
-    shuffle():void {
-        console.log('Shuffling...');
+    shuffle(): void {
+        // console.log('Shuffling...');
         // transfer cards from discard array
         if (!this.cards.length && this.discards.length) {
-            this.cards = this.cards.concat(this.discards);
+            this.cards = [...this.cards, ...this.discards];
             this.discards.length = 0;
         }
 
@@ -78,11 +79,18 @@ export default class Deck {
 
         while (currIndex > 0) {
             randomIndex = Math.floor(Math.random() * currIndex);
-            currIndex --;
+            currIndex--;
 
             temp = this.cards[currIndex];
             this.cards[currIndex] = this.cards[randomIndex];
             this.cards[randomIndex] = temp;
         }
+    }
+
+    deal(): Card {
+        if (!this.cards.length) {
+            this.shuffle();
+        }
+        return this.cards.pop();
     }
 }

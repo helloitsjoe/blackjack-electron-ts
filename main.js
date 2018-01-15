@@ -13,25 +13,35 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({width: 800, height: 400, x: 0, y: 0});
+  playerWindow = new BrowserWindow({width: 800, height: 400, x: 0, y: 430});
+  player2Window = new BrowserWindow({width: 800, height: 400, x: 400, y: 430});
+
+  const urlObj = (endpoint = '') => ({
+    pathname: `localhost:8080${endpoint}`,
+    protocol: `http:`,
+    slashes: true
+  });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
-    pathname: 'localhost:8080',
-    // pathname: path.join(__dirname, 'index.html'),
-    protocol: 'http:',
-    slashes: true
-  }))
+  mainWindow.loadURL(url.format(urlObj()));
+  setTimeout(() => {
+    playerWindow.loadURL(url.format(urlObj('/player')));
+    player2Window.loadURL(url.format(urlObj('/player')));
+  }, 500);
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
+  playerWindow.webContents.openDevTools()
+  player2Window.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null
+    mainWindow = null;
+    playerWindow = null;
   })
 }
 
@@ -56,6 +66,15 @@ app.on('activate', function () {
     createWindow()
   }
 })
+
+function sparkUpServer() {
+    const { spawn } = require('child_process');
+    const child = spawn('node', ['./src/server/server.js'], {
+        // detached: true,
+        stdio: 'ignore'
+    });
+    // child.unref();
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
