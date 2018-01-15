@@ -10,9 +10,9 @@ export class Deck {
     public cards: Card[] = [];
     public discards: Card[] = [];
 
-    constructor(numPacks: number) {
-        this.init(numPacks);
-        this.shuffle();
+    constructor() {
+        // this.init(numPacks);
+        // this.shuffle();
 
         // debug
         // this.cards.forEach((card) => {
@@ -58,17 +58,17 @@ export class Deck {
                         suit: suits[suit],
                         face: faces(i),
                     };
-                    this.cards.push(card);
+                    this.cards = [...this.cards, card];
                 }
             }
         }
     }
 
     shuffle(): void {
-        console.log('Shuffling...');
+        // console.log('Shuffling...');
         // transfer cards from discard array
         if (!this.cards.length && this.discards.length) {
-            this.cards = this.cards.concat(this.discards);
+            this.cards = [...this.cards, ...this.discards];
             this.discards.length = 0;
         }
 
@@ -85,5 +85,12 @@ export class Deck {
             this.cards[currIndex] = this.cards[randomIndex];
             this.cards[randomIndex] = temp;
         }
+    }
+
+    deal(): Card {
+        if (!this.cards.length) {
+            this.shuffle();
+        }
+        return this.cards.pop();
     }
 }

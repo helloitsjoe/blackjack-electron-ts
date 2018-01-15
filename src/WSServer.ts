@@ -31,12 +31,12 @@ export class WSServer {
             ws.on('message', this.onMessage.bind(this, ws));
             ws.on('close', this.onClose.bind(this, ws, game));
 
-            this.connections.push(ws);
+            this.connections = [...this.connections, ws];
             this.clientID++;
             ws.id = this.clientID;
 
             this.game.totalPlayers++;
-            this.game.players.push(new Player(game, this.clientID));
+            this.game.players = [...this.game.players, new Player(game, this.clientID)];
 
             console.log(`Player joined! Total: ${game.totalPlayers}`);
 
@@ -67,7 +67,7 @@ export class WSServer {
         switch (json.type) {
             case MessageType.HIT:
                 // Either send one card at a time, or the whole hand
-                cards = [player.hit(1)];
+                cards = [player.hit(this.game.deck.deal())];
 
                 if (player.bust) {
                     type = MessageType.BUST;

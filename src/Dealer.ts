@@ -15,7 +15,7 @@ export class Dealer extends Player {
 
     dealerTurn(): void {
         while (this.score < 17) {
-            this.hit();
+            this.hit(this.deck.deal());
         }
         // Why this if?
         if (this.score < 21) {

@@ -11,7 +11,8 @@
         "skipLibCheck": true,
         "types": [
             "node"
-        ]
+        ],
+        "lib": [ "es2015", "dom"]
     },
     "include": [
         "./src/**/*"

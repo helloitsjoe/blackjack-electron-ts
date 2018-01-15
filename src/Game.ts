@@ -5,9 +5,6 @@ import { WSServer } from './WSServer';
 import { WSClient } from './WSClient';
 import * as WebSocket from 'ws';
 
-const HOST = 'localhost';
-const WSS_PORT = 8081;
-
 export class Game {
 
     private wsServer: WebSocket.Server;
@@ -22,36 +19,36 @@ export class Game {
         // this.refresh = this.refresh.bind(this);
     }
 
-    public initDealer(): void {
+    public initDealer(wsServer: WebSocket.Server): void {
         // Set up a server, which creates a new Player on a new connection
-        console.log(`Dealer: ws server listening on port ${WSS_PORT}`);
-        this.wsServer = new WSServer(this, new WebSocket.Server({ port: WSS_PORT }));
+        this.wsServer = new WSServer(this, wsServer);
 
-        this.deck = new Deck(1);
+        this.deck = new Deck();
+        this.deck.init(1);
+        this.deck.shuffle();
 
         this.dealer = new Dealer(this, 0);
-        // this.players.push(this.dealer);
+        // this.players = [...this.players, this.dealer];
     }
 
-    public initPlayer(): void {
-        console.log('Player, setting up ws client');
-        const ws = new WSClient(HOST, WSS_PORT);
+    public initPlayer(ws: WebSocket): void {
+        const client = new WSClient(ws);
     }
 
     play(): void {
         console.log('Total players:', this.totalPlayers);
-        this.deal(this.players);
+        this.deal();
     }
 
-    deal(players: Player[]): void {
-        this.dealer.discard(this.deck);
-
-        players.forEach((player, i) => {
-            console.log('player number:', i);
-            player.discard(this.deck);
+    deal(): void {
+        this.dealer.discard();
+        
+        this.players.forEach((player, i) => {
+            // console.log('player number:', i);
+            this.deck.discards = [...this.deck.discards, ...player.discard()];
             player.deal();
         });
-        this.wsServer.sendHands(players);
+        this.wsServer.sendHands(this.players);
 
         this.dealer.deal();
         // if dealer has blackjack, send a message to all players

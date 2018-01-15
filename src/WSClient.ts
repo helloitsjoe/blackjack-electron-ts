@@ -10,8 +10,7 @@ export class WSClient {
     private gui: PlayerGUI;
     // private game: Game;
 
-    constructor(host: string, port: number/*, game: Game*/) {
-        const ws: any = new WebSocket(`ws://${host}:${port}`);
+    constructor(ws: WebSocket/*, game: Game*/) {
 
         ws.addEventListener('open', this.onOpen.bind(this));
         ws.addEventListener('close', this.onClose.bind(this));
