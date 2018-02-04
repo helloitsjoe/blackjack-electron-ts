@@ -28,19 +28,21 @@ export class WSServer {
 
     constructor(private game: Game, server: WebSocket.Server) {
         server.on('connection', (ws) => {
-            ws.on('message', this.onMessage.bind(this, ws));
-            ws.on('close', this.onClose.bind(this, ws, game));
-
-            this.connections = [...this.connections, ws];
-            this.clientID++;
-            ws.id = this.clientID;
-
-            this.game.totalPlayers++;
-            this.game.players = [...this.game.players, new Player(game, this.clientID)];
-
-            console.log(`Player joined! Total: ${game.totalPlayers}`);
-
-            ws.send(JSON.stringify({ id: this.clientID, type: MessageType.CONNECTED }));
+            if (ws.readyState === ws.OPEN) {
+                ws.on('message', this.onMessage.bind(this, ws));
+                ws.on('close', this.onClose.bind(this, ws, game));
+    
+                this.connections = [...this.connections, ws];
+                this.clientID++;
+                ws.id = this.clientID;
+    
+                this.game.totalPlayers++;
+                this.game.players = [...this.game.players, new Player(game, this.clientID)];
+    
+                console.log(`Player joined! Total: ${game.totalPlayers}`);
+    
+                ws.send(JSON.stringify({ id: this.clientID, type: MessageType.CONNECTED }));
+            }
         });
     }
 

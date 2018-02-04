@@ -7,6 +7,7 @@
     "server:watch": "node_modules/.bin/nodemon src/server/server.js",
     "server": "node src/server/server.js",
     "watch": "node_modules/.bin/webpack --watch",
+    "build": "node_modules/.bin/webpack",
     "start": "electron .",
     "test": "mocha --watch ./tests/index.js"
   },
