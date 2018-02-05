@@ -1,16 +1,14 @@
 import { Game } from './Game';
 import * as WS from 'ws';
-// const localtunnel = require('localtunnel');
+// import * as localtunnel from 'localtunnel';
 
 const game = new Game();
 const testDOM = document.getElementById('test-dom');
 const dealButton = document.getElementById('deal-button');
 const infoBox = document.getElementById('info-box');
 
-const HOST = 'localhost';
-// TOSO: Make HOST dynamic using localtunnel
-// In meantime, use computer's IP address
-// const HOST = '192.168.0.106';
+// TODO: localtunnel... in meantime, use IP address
+const HOST = window.location.hostname || 'localhost';
 const WSS_PORT = 8081;
 
 if (testDOM) {
@@ -20,22 +18,28 @@ if (testDOM) {
     const wsServer = new WS.Server({ port: WSS_PORT });
     console.log(`Dealer: ws server listening on port ${WSS_PORT}`);
 
-    // // TODO: Display "Loading..."
+    const tryTunnel = (subdomain) => {
+        // // TODO: Display "Loading..."
+        // localtunnel(8081, { subdomain }, (err, tunnel) => {
+        //     if (err) {
+        //         console.error(err);
+        //     }
+        //     console.log(`tunnel:`, tunnel.url);
+        //     if (tunnel.url !== `https://${subdomain}.localtunnel.me`) {
+        //         tryTunnel(subdomain);
+        //     } else {
+        //         // TODO: Clear "Loading..."
+                game.initDealer(wsServer);
+        //     }
+        // });
+    }
 
-    // localtunnel(8081, {subdomain: 'blackjack'}, (err, tunnel) => {
-    //     if (err) {
-    //         console.error(err);
-    //     }
-    //     // TODO: Clear "Loading..."
-    //     console.log(`tunnel:`, tunnel.url);
-        game.initDealer(wsServer);
-    // });
+    tryTunnel('blackjack');
 
 } else {
     console.log('Player, setting up ws client');
     // Need to use web API WebSocket (not ws) to avoid CORS issues
-    const ws: any = new WebSocket(`ws://${HOST}:${WSS_PORT}`);
-    // const ws: any = new WebSocket(`ws://blackjack.localtunnel.me`);
+    const ws = new WebSocket(`ws://${HOST}:${WSS_PORT}`);
     game.initPlayer(ws);
 }
 
