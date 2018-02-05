@@ -1,31 +1,46 @@
 import { Game } from './Game';
-import * as WebSocket from 'ws';
+import * as WS from 'ws';
+// const localtunnel = require('localtunnel');
 
 const game = new Game();
 const testDOM = document.getElementById('test-dom');
-const playButton = document.getElementById('play-button');
+const dealButton = document.getElementById('deal-button');
 const infoBox = document.getElementById('info-box');
 
 const HOST = 'localhost';
+// TOSO: Make HOST dynamic using localtunnel
+// In meantime, use computer's IP address
+// const HOST = '192.168.0.106';
 const WSS_PORT = 8081;
 
 if (testDOM) {
     // NoOp
-} else if (playButton) {
-    playButton.addEventListener('click', onPlayClick);
-    const wsServer = new WebSocket.Server({ port: WSS_PORT });
+} else if (dealButton) {
+    dealButton.addEventListener('click', onPlayClick);
+    const wsServer = new WS.Server({ port: WSS_PORT });
     console.log(`Dealer: ws server listening on port ${WSS_PORT}`);
 
-    game.initDealer(wsServer);
+    // // TODO: Display "Loading..."
+
+    // localtunnel(8081, {subdomain: 'blackjack'}, (err, tunnel) => {
+    //     if (err) {
+    //         console.error(err);
+    //     }
+    //     // TODO: Clear "Loading..."
+    //     console.log(`tunnel:`, tunnel.url);
+        game.initDealer(wsServer);
+    // });
+
 } else {
     console.log('Player, setting up ws client');
+    // Need to use web API WebSocket (not ws) to avoid CORS issues
     const ws: any = new WebSocket(`ws://${HOST}:${WSS_PORT}`);
-
+    // const ws: any = new WebSocket(`ws://blackjack.localtunnel.me`);
     game.initPlayer(ws);
 }
 
 function onPlayClick() {
-    playButton.classList.add('hidden');
+    dealButton.classList.add('hidden');
     infoBox.classList.remove('hidden');
     game.play();
 }

@@ -8,7 +8,7 @@ const { document } = (new JSDOM(`
     <div id="test-dom"></div>
     <div class="container" id="dealer">
         <h1>Blackjack!</h1>
-        <button id="play-button">Play</button>
+        <button id="deal-button">Play</button>
         <div id="dealer-box">
             <div id="card-box">
             

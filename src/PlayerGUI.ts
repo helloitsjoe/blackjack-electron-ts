@@ -33,8 +33,7 @@ export class PlayerGUI {
 
     addCard(cardData: Card): void {
         // this.score.innerHTML = this.player.score.toString();
-        let card = e('div', 'card', null, this.cardBox);
-        card.innerHTML = cardData.display;
+        let card = e('div', 'card', null, this.cardBox, cardData.display);
     }
 
     clearCards(): void {

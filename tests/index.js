@@ -1,6 +1,6 @@
 require('./mockDOM');
 
-const main = require('../index');
+const main = require('../index.node');
 // const WebSocket = require('ws');
 global.main = main;
 

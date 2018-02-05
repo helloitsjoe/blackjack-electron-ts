@@ -28,5 +28,8 @@
     "typescript": "^2.4.2",
     "webpack": "^3.4.1",
     "ws": "^3.2.0"
+  },
+  "dependencies": {
+    "localtunnel": "^1.8.3"
   }
 }
