@@ -10,7 +10,7 @@ export class Game {
     private wsServer: WebSocket.Server;
     public totalPlayers: number = 1; // Dealer
     public dealer: Dealer;
-    public players: any[] = []; // TODO: No any
+    public players: Player[] = [];
     private curr: number = 0;
     // private endState: Element;
     public deck: Deck;
@@ -19,9 +19,9 @@ export class Game {
         // this.refresh = this.refresh.bind(this);
     }
 
-    public init(wsServer: WebSocket.Server): void {
+    public init(server: WebSocket.Server): void {
         // Set up a server, which creates a new Player on a new connection
-        this.wsServer = new WSServer(this, wsServer);
+        this.wsServer = new WSServer(this, server);
 
         this.deck = new Deck();
         this.deck.init({ numPacks: 1, shuffle: true });
@@ -30,8 +30,8 @@ export class Game {
         // this.players = [...this.players, this.dealer];
     }
 
-    public initPlayer(ws: WebSocket): void {
-        const client = new WSClient(ws);
+    public initPlayer(ws: WebSocket): WSClient {
+        return new WSClient(ws);
     }
 
     play(): void {
@@ -52,6 +52,16 @@ export class Game {
         this.dealer.deal();
         // if dealer has blackjack, send a message to all players
         // this.nextPlayer();
+    }
+
+    close(): void {
+        this.deck = null;
+        this.dealer = null;
+        this.players = [];
+        if (this.wsServer) {
+            this.wsServer.close();
+            this.wsServer = null;
+        }
     }
 
     // UNCOMMENT ALL THESE WHEN YOU'VE GOT BASIC COMMUNICATION WORKING

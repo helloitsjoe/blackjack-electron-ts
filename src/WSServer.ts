@@ -26,27 +26,27 @@ export class WSServer {
     private connections: WebSocket[] = [];
     private clientID: number = 0;
 
-    constructor(private game: Game, server: WebSocket.Server) {
-        server.on('connection', (ws) => {
+    constructor(private game: Game, private server: WebSocket.Server) {
+        this.server.on('connection', (ws) => {
             if (ws.readyState === ws.OPEN) {
                 ws.on('message', this.onMessage.bind(this, ws));
-                ws.on('close', this.onClose.bind(this, ws, game));
+                ws.on('close', this.onClose.bind(this, ws));
     
-                this.connections = [...this.connections, ws];
+                this.connections.push(ws);
                 this.clientID++;
                 ws.id = this.clientID;
     
                 this.game.totalPlayers++;
-                this.game.players = [...this.game.players, new Player(game, this.clientID)];
+                this.game.players.push(new Player(this.game, this.clientID));
     
-                console.log(`Player joined! Total: ${game.totalPlayers}`);
+                console.log(`Player joined! Total: ${this.game.totalPlayers}`);
     
                 ws.send(JSON.stringify({ id: this.clientID, type: MessageType.CONNECTED }));
             }
         });
     }
 
-    public sendHands(players): void {
+    public sendHands(players: Player[]): void {
         this.connections.forEach((connex, i) => {
             const type = 'HIT';
             const cards = players[i].hand;
@@ -95,11 +95,22 @@ export class WSServer {
         ws.send(JSON.stringify({ msg, cards, type, id }));
     }
 
-    private onClose(ws, game) {
-        game.totalPlayers--;
-        console.log(`Player left, total players: ${game.totalPlayers}`);
+    private onClose(ws) {
+        this.game.totalPlayers--;
+        
+        const indexFromWsID = (arr) => arr.findIndex(entity => entity.id === ws.id);
 
-        const connIdx = this.connections.findIndex(cnx => cnx === ws);
+        const playerIdx = indexFromWsID(this.game.players);
+        const connIdx = indexFromWsID(this.connections);
+        this.game.players.splice(playerIdx, 1);
         this.connections.splice(connIdx, 1);
+        console.log(`Player left, total players: ${this.game.totalPlayers}`);
+    }
+
+    public close(): void {
+        this.server.removeAllListeners();
+        this.connections.forEach(connection => connection.close());
+        this.clientID = 0;
+        this.connections.length = 0;
     }
 }

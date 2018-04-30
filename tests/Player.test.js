@@ -18,7 +18,7 @@ describe('Player', function () {
     beforeEach(() => {
         server = new WebSocket.Server({ port: FAKE_PORT });
         game = new Game();
-        game.init(server, FAKE_PORT);
+        game.init(server);
         player = new Player(game, 1);
         game.players.push(player);
     });

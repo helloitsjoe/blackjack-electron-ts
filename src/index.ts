@@ -39,8 +39,7 @@ if (testDOM) {
 } else {
     console.log('Player, setting up ws client');
     // Need to use web API WebSocket (not ws) to avoid CORS issues
-    const ws = new WebSocket(`ws://${HOST}:${WSS_PORT}`);
-    game.initPlayer(ws);
+    game.initPlayer(new WebSocket(`ws://${HOST}:${WSS_PORT}`));
 }
 
 function onPlayClick() {

@@ -9,11 +9,11 @@ export class WSClient {
     private gui: PlayerGUI;
     // private game: Game;
 
-    constructor(ws: WebSocket/*, game: Game*/) {
+    constructor(private ws: WebSocket/*, game: Game*/) {
 
-        ws.addEventListener('open', this.onOpen.bind(this));
-        ws.addEventListener('close', this.onClose.bind(this));
-        ws.addEventListener('message', this.onMessage.bind(this));
+        this.ws.addEventListener('open', this.onOpen.bind(this));
+        this.ws.addEventListener('close', this.onClose.bind(this));
+        this.ws.addEventListener('message', this.onMessage.bind(this));
 
         this.hit = this.hit.bind(this, ws);
         this.endTurn = this.endTurn.bind(this, ws);
@@ -25,14 +25,14 @@ export class WSClient {
         this.gui.stayButton.addEventListener('click', this.endTurn);
     }
 
-    hit(ws): void {
+    hit(): void {
         console.log('Hit me!');
-        ws.send(JSON.stringify({ type: 'HIT', id: this.id }));
+        this.ws.send(JSON.stringify({ type: 'HIT', id: this.id }));
     }
 
-    endTurn(ws): void {
+    endTurn(): void {
         console.log('end turn id:', this.id);
-        ws.send(JSON.stringify({ type: 'STAY', id: this.id }));
+        this.ws.send(JSON.stringify({ type: 'STAY', id: this.id }));
     }
 
     onMessage(res: Message): void {

@@ -2,8 +2,9 @@
 const { expect } = require('chai');
 const WebSocket = require('ws');
 
-const { Dealer, Deck, Game, Player, WSServer } = global.main;
+const { Dealer, Deck, Game, Player, WSServer, WSClient } = global.main;
 
+const HOST = 'localhost';
 const FAKE_PORT = 1234;
 const FULL_DECK_LENGTH = 52;
 
@@ -11,25 +12,24 @@ describe('Game', function () {
 
     let server = null;
     let game = null;
+    let wsServer = null;
 
     before(() => {
         server = new WebSocket.Server({ port: FAKE_PORT });
-    })
-
-    beforeEach(() => {
         game = new Game();
     });
 
     afterEach(() => {
-        game = null;
+        game.close();
     });
 
     after(() => {
+        game = null;
         server.close();
     })
 
     it('init creates wsServer, dealer, Deck', function () {
-        game.init(server, FAKE_PORT);
+        game.init(server);
         expect(game.wsServer).to.be.instanceof(WSServer);
         expect(game.deck).to.be.instanceof(Deck);
         expect(game.dealer).to.be.instanceof(Dealer);
@@ -46,6 +46,71 @@ describe('Game', function () {
 
     it('curr = 0', function () {
         expect(game.curr).to.equal(0);
+    });
+
+    describe('WebSocket client/server', function () {
+
+        it('create new Player on connection', function (done) {
+            game.init(server);
+            expect(game.players.length).to.equal(0);
+            const client = game.initPlayer(new WebSocket(`ws://${HOST}:${FAKE_PORT}`));
+            client.ws.on('open', () => {
+                expect(game.players.length).to.equal(1);
+                expect(game.totalPlayers).to.equal(2);
+                expect(game.players[0]).to.be.instanceof(Player);
+                done();
+            });
+        });
+
+        it('remove Player on disconnect', function (done) {
+            game.init(server);
+            expect(game.players.length).to.equal(0);
+            const client = game.initPlayer(new WebSocket(`ws://${HOST}:${FAKE_PORT}`));
+            client.ws.on('open', () => {
+                game.wsServer.connections[0].close();
+                client.ws.on('close', () => {
+                    expect(game.totalPlayers).to.equal(1);
+                    expect(game.players.length).to.equal(0);
+                    done();
+                });
+            });
+        });
+
+        it('Each player gets unique ID', function (done) {
+            game.init(server);
+            expect(game.players.length).to.equal(0);
+            const client1 = game.initPlayer(new WebSocket(`ws://${HOST}:${FAKE_PORT}`));
+            const client2 = game.initPlayer(new WebSocket(`ws://${HOST}:${FAKE_PORT}`));
+            let openClients = 0;
+            const incrementOpenClients = () => openClients++;
+            client1.ws.on('open', incrementOpenClients);
+            client2.ws.on('open', incrementOpenClients);
+            let interval = setInterval(() => {
+                if (openClients === 2) {
+                    clearInterval(interval);
+                    expect(client1.id).to.not.equal(client2.id);
+                    done();
+                }
+            }, 10);
+        });
+
+        it('Each player gets unique ID', function (done) {
+            game.init(server);
+            expect(game.players.length).to.equal(0);
+            let openClients = 0;
+            const incrementOpenClients = () => openClients++;
+            const client1 = game.initPlayer(new WebSocket(`ws://${HOST}:${FAKE_PORT}`));
+            const client2 = game.initPlayer(new WebSocket(`ws://${HOST}:${FAKE_PORT}`));
+            client1.ws.on('open', incrementOpenClients);
+            client2.ws.on('open', incrementOpenClients);
+            let interval = setInterval(() => {
+                if (openClients === 2) {
+                    clearInterval(interval);
+                    expect(client1.id).to.not.equal(client2.id);
+                    done();
+                }
+            }, 10);
+        });
     });
 
     describe('deal', function () {

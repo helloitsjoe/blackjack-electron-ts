@@ -9,10 +9,10 @@ export class Player {
     public hand: Card[] = [];
     public score: number = 0;
     public gui: DealerGUI; // | PlayerGUI
+    public id: number;
+    public bust: boolean = false;
+    public blackjack: boolean = false;
     protected deck: Deck;
-    private id: number;
-    private bust: boolean = false;
-    private blackjack: boolean = false;
     // protected game: Game;
 
     constructor(game: Game, id: number) {
