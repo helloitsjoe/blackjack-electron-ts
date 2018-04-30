@@ -29,7 +29,7 @@ if (testDOM) {
         //         tryTunnel(subdomain);
         //     } else {
         //         // TODO: Clear "Loading..."
-                game.initDealer(wsServer);
+                game.init(wsServer);
         //     }
         // });
     }

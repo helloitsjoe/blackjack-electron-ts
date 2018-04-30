@@ -5,6 +5,11 @@ export interface Card {
     display: string;
 }
 
+interface DeckOptions {
+    numPacks: number;
+    shuffle?: boolean;
+}
+
 export class Deck {
 
     public cards: Card[] = [];
@@ -21,7 +26,10 @@ export class Deck {
         // console.log(this.cards.length)
     }
 
-    init(numPacks: number): void {
+    init(options: DeckOptions): void {
+        const defaultOptions = { numPacks: 1, shuffle: true };
+        options = Object.assign({}, defaultOptions, options);
+
         const suits = {
             clubs: 0,
             hearts: 1,
@@ -45,7 +53,7 @@ export class Deck {
         }
 
         // for each pack of cards
-        for (let n = 0; n < numPacks; n++) {
+        for (let n = 0; n < options.numPacks; n++) {
             // for each suit
             for (let suit in suits) {
                 // push 13 cards
@@ -61,6 +69,9 @@ export class Deck {
                     this.cards = [...this.cards, card];
                 }
             }
+        }
+        if (options.shuffle) {
+            this.shuffle();
         }
     }
 

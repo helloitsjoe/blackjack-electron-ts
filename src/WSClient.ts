@@ -4,7 +4,6 @@ import * as WebSocket from 'ws';
 
 export class WSClient {
 
-    // public ws: any;
     public players: any;
     private id: number;
     private gui: PlayerGUI;

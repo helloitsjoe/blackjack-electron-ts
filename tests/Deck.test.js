@@ -1,17 +1,15 @@
 'use strict'
 const { expect } = require('chai');
-const WebSocket = require('ws');
 
-const { Dealer, DealerGUI, Deck, Game, Player, PlayerGUI, WSClient, WSServer } = global.main;
+const { Deck } = global.main;
 
-const HOST = 'localhost';
-const FAKE_PORT = 1234;
 const FULL_DECK_LENGTH = 52;
 
 describe('Deck', function () {
 
     const expectedValues = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
     const expectedFaces = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'];
+    let deck = null;
 
     beforeEach(() => {
         deck = new Deck();
@@ -22,7 +20,7 @@ describe('Deck', function () {
     });
 
     it('init deals a full deck', function () {
-        deck.init(1);
+        deck.init({ numPacks: 1, shuffle: false });
         const suits = [[], [], [], []];
         deck.cards.forEach(card => {
             expect(card.display, 'display').to.be.ok;
@@ -41,12 +39,12 @@ describe('Deck', function () {
     });
 
     it('init deals multiple decks', function () {
-        deck.init(2);
+        deck.init({ numPacks: 2 });
         expect(deck.cards.length).to.equal(FULL_DECK_LENGTH * 2);
     });
 
     it('shuffle randomizes deck', function () {
-        deck.init(1);
+        deck.init({ numPacks: 1, shuffle: false });
         const preShuffleCards = [...deck.cards];
         deck.shuffle();
         expect(deck.cards.length).to.equal(preShuffleCards.length);
@@ -54,7 +52,7 @@ describe('Deck', function () {
     });
 
     it('shuffle replaces deck with discards', function () {
-        deck.init(1);
+        deck.init({ numPacks: 1 });
         while (deck.cards.length) {
             deck.discards = [...deck.discards, deck.deal()];
         }
@@ -66,7 +64,7 @@ describe('Deck', function () {
     });
 
     it('deal removes a card from the deck', function () {
-        deck.init(1);
+        deck.init({ numPacks: 1 });
         const expected = deck.cards.slice(-1);
         const card = deck.deal();
         expect(card).to.deep.equal(...expected);
@@ -74,7 +72,7 @@ describe('Deck', function () {
     });
 
     it('deal shuffles at end of deck', function () {
-        deck.init(1);
+        deck.init({ numPacks: 1 });
         const origCards = [...deck.cards];
 
         // Move all cards into discards

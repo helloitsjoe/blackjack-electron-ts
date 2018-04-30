@@ -19,13 +19,12 @@ export class Game {
         // this.refresh = this.refresh.bind(this);
     }
 
-    public initDealer(wsServer: WebSocket.Server): void {
+    public init(wsServer: WebSocket.Server): void {
         // Set up a server, which creates a new Player on a new connection
         this.wsServer = new WSServer(this, wsServer);
 
         this.deck = new Deck();
-        this.deck.init(1);
-        this.deck.shuffle();
+        this.deck.init({ numPacks: 1, shuffle: true });
 
         this.dealer = new Dealer(this, 0);
         // this.players = [...this.players, this.dealer];
